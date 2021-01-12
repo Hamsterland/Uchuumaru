@@ -1,0 +1,73 @@
+﻿using System;
+using System.IO;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Threading.Tasks;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using Interactivity;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+using Uchuumaru.Data;
+using Uchuumaru.Services;
+
+namespace Uchuumaru
+{
+    public class Program
+    {
+        public static async Task Main(string[] args) => await Host.CreateDefaultBuilder()
+            .UseSerilog((_, configuration) =>
+            {
+                configuration
+                    .Enrich.FromLogContext()
+                    .MinimumLevel.Information()
+                    .WriteTo.Console(theme: AnsiConsoleTheme.Literate);
+            })
+            .ConfigureAppConfiguration((_, builder) =>
+            {
+                builder
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", false, true);
+            })
+            .ConfigureServices((context, collection) =>
+            {
+                var client = new DiscordSocketClient(new DiscordSocketConfig
+                {
+                    AlwaysDownloadUsers = true,
+                    MessageCacheSize = 10000,
+                    LogLevel = LogSeverity.Info
+                });
+
+                var commands = new CommandService(new CommandServiceConfig
+                {
+                    DefaultRunMode = RunMode.Sync,
+                    LogLevel = LogSeverity.Info
+                });
+
+                var interactivity = new InteractivityService(client);
+
+                collection
+                    .AddMediatR(typeof(Program).Assembly)
+                    .AddSingleton(client)
+                    .AddSingleton(interactivity)
+                    .AddSingleton(provider =>
+                    {
+                        commands.AddModulesAsync(Assembly.GetEntryAssembly(), provider);
+                        return commands;
+                    })
+                    .AddDbContext<UchuumaruContext>(options =>
+                    {
+                        options.UseNpgsql(context.Configuration["Postgres:Connection"]);
+                    })
+                    .AddHostedService<Startup>()
+                    .AddHostedService<DiscordListener>();
+            })
+            .RunConsoleAsync();
+    }
+}
