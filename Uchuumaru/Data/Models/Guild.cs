@@ -13,6 +13,9 @@ namespace Uchuumaru.Data.Models
         [Required]
         public ulong GuildId { get; set; }
 
+        [Required]
+        public bool EnabledFilter { get; set; }
+        
         public List<Filter> Filters { get; set; }
 
         public List<Infraction> Infractions { get; set; }
