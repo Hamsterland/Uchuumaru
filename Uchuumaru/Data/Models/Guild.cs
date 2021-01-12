@@ -12,6 +12,10 @@ namespace Uchuumaru.Data.Models
 
         [Required]
         public ulong GuildId { get; set; }
+
+        public List<Filter> Filters { get; set; }
+
+        public List<Infraction> Infractions { get; set; }
     }
     
     public class GuildConfiguration : IEntityTypeConfiguration<Guild>
