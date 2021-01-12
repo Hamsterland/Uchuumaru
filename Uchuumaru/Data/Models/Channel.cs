@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Uchuumaru.Data.Models
 {
@@ -9,8 +11,28 @@ namespace Uchuumaru.Data.Models
 
         [Required]
         public ulong ChannelId { get; set; }
-        
+
         [Required]
-        public Guild Guild { get; set; }
+        public ulong GuildId { get; set; }
+    }
+    
+    public class ChannelConfiguration : IEntityTypeConfiguration<Channel>
+    {
+        public void Configure(EntityTypeBuilder<Channel> builder)
+        {
+            builder
+                .HasIndex(x => x.ChannelId)
+                .IsUnique();
+
+            builder.HasIndex(x => x.GuildId);
+
+            builder
+                .Property(x => x.ChannelId)
+                .HasConversion<long>();
+
+            builder
+                .Property(x => x.GuildId)
+                .HasConversion<long>();
+        }
     }
 }
