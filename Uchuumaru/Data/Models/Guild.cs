@@ -18,6 +18,8 @@ namespace Uchuumaru.Data.Models
         
         public List<Filter> Filters { get; set; }
 
+        public ulong FilterChannelId { get; set; }
+        
         public List<Infraction> Infractions { get; set; }
     }
     
@@ -31,6 +33,10 @@ namespace Uchuumaru.Data.Models
 
             builder
                 .Property(x => x.GuildId)
+                .HasConversion<long>();
+
+            builder
+                .Property(x => x.FilterChannelId)
                 .HasConversion<long>();
         }
     }

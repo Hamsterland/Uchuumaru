@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Uchuumaru.Data;
@@ -9,9 +10,10 @@ using Uchuumaru.Data;
 namespace Uchuumaru.Migrations
 {
     [DbContext(typeof(UchuumaruContext))]
-    partial class UchuumaruContextModelSnapshot : ModelSnapshot
+    [Migration("20210112223240_DbSet")]
+    partial class DbSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,9 +74,6 @@ namespace Uchuumaru.Migrations
 
                     b.Property<bool>("EnabledFilter")
                         .HasColumnType("boolean");
-
-                    b.Property<long>("FilterChannelId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("GuildId")
                         .HasColumnType("bigint");
