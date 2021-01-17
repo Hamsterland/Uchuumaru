@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Uchuumaru.Notifications;
+using Uchuumaru.Notifications.Message;
 
 namespace Uchuumaru.Services.Commands
 {

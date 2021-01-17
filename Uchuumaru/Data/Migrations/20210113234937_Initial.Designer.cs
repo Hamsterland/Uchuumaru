@@ -10,8 +10,8 @@ using Uchuumaru.Data;
 namespace Uchuumaru.Migrations
 {
     [DbContext(typeof(UchuumaruContext))]
-    [Migration("20210113101257_MoreFilters")]
-    partial class MoreFilters
+    [Migration("20210113234937_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -99,8 +99,8 @@ namespace Uchuumaru.Migrations
                     b.Property<bool>("Completed")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("Duration")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
 
                     b.Property<int>("GuildId")
                         .HasColumnType("integer");

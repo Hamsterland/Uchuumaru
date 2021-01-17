@@ -25,7 +25,7 @@ namespace Uchuumaru.Data.Models
         [Required]
         public DateTime TimeInvoked { get; set; }
         
-        public DateTime Duration { get; set; }
+        public TimeSpan Duration { get; set; }
         
         public string Reason { get; set; }
 
@@ -52,13 +52,17 @@ namespace Uchuumaru.Data.Models
                 .HasOne(x => x.Guild)
                 .WithMany(x => x.Infractions);
         }
-    }
+    }   
 
+    /// <summary>
+    /// Represents the possible types of an <see cref="Infraction"/>.
+    /// </summary>
     public enum InfractionType
     {
         Ban,
         Mute,
         Kick,
-        Warning 
+        Warning,
+        Filter
     }
 }

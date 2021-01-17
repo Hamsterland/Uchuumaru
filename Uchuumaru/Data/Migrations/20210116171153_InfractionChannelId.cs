@@ -2,23 +2,23 @@
 
 namespace Uchuumaru.Migrations
 {
-    public partial class EnabledFilter : Migration
+    public partial class InfractionChannelId : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "EnabledFilter",
-                table: "Guild",
-                type: "boolean",
+            migrationBuilder.AddColumn<decimal>(
+                name: "InfractionChannelId",
+                table: "Guilds",
+                type: "numeric(20,0)",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: 0m);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "EnabledFilter",
-                table: "Guild");
+                name: "InfractionChannelId",
+                table: "Guilds");
         }
     }
 }

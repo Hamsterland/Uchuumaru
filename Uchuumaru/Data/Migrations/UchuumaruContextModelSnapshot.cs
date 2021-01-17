@@ -79,6 +79,9 @@ namespace Uchuumaru.Migrations
                     b.Property<long>("GuildId")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("InfractionChannelId")
+                        .HasColumnType("numeric(20,0)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GuildId")
@@ -97,8 +100,8 @@ namespace Uchuumaru.Migrations
                     b.Property<bool>("Completed")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("Duration")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
 
                     b.Property<int>("GuildId")
                         .HasColumnType("integer");

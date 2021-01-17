@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Uchuumaru.Notifications;
+using Uchuumaru.Notifications.Commands;
 
 namespace Uchuumaru.Services
 {

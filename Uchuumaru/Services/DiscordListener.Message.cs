@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Discord.WebSocket;
-using Uchuumaru.Notifications;
+using Uchuumaru.Notifications.Message;
 
 namespace Uchuumaru.Services
 {

@@ -39,6 +39,11 @@ namespace Uchuumaru.Data.Models
         public ulong GuildId { get; init; }
 
         /// <summary>
+        /// The filter channel Id. 
+        /// </summary>
+        public ulong FilterChannelId { get; set; }
+
+        /// <summary>
         /// Whether the Filter is enabled or not.
         /// </summary>
         public bool Enabled { get; init; }
@@ -47,5 +52,11 @@ namespace Uchuumaru.Data.Models
         /// The filtered expressions.
         /// </summary>
         public List<string> Expressions { get; set; }
+    }
+
+    public enum FilterChannelOptions
+    {
+        Set,
+        Remove
     }
 }

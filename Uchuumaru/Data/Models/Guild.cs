@@ -15,12 +15,14 @@ namespace Uchuumaru.Data.Models
 
         [Required]
         public bool EnabledFilter { get; set; }
-        
-        public List<Filter> Filters { get; set; }
+
+        public List<Filter> Filters { get; set; } = new();
 
         public ulong FilterChannelId { get; set; }
-        
-        public List<Infraction> Infractions { get; set; }
+
+        public List<Infraction> Infractions { get; set; } = new();
+
+        public ulong InfractionChannelId { get; set; }
     }
     
     public class GuildConfiguration : IEntityTypeConfiguration<Guild>

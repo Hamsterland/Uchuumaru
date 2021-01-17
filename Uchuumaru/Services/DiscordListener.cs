@@ -26,6 +26,8 @@ namespace Uchuumaru.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _client.MessageReceived += MessageReceived;
+            _client.JoinedGuild += JoinedGuild;
+            _client.LeftGuild += LeftGuild;
             _commands.CommandExecuted += CommandExecuted;
             return Task.CompletedTask;
         }
@@ -33,6 +35,8 @@ namespace Uchuumaru.Services
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _client.MessageReceived -= MessageReceived;
+            _client.JoinedGuild -= JoinedGuild;
+            _client.LeftGuild -= LeftGuild;
             _commands.CommandExecuted -= CommandExecuted;
             return Task.CompletedTask;
         }

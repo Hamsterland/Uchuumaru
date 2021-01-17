@@ -10,8 +10,8 @@ using Uchuumaru.Data;
 namespace Uchuumaru.Migrations
 {
     [DbContext(typeof(UchuumaruContext))]
-    [Migration("20210112222132_Infractions")]
-    partial class Infractions
+    [Migration("20210116171153_InfractionChannelId")]
+    partial class InfractionChannelId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,7 +41,7 @@ namespace Uchuumaru.Migrations
 
                     b.HasIndex("GuildId");
 
-                    b.ToTable("Channel");
+                    b.ToTable("Channels");
                 });
 
             modelBuilder.Entity("Uchuumaru.Data.Models.Filter", b =>
@@ -72,15 +72,24 @@ namespace Uchuumaru.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
+                    b.Property<bool>("EnabledFilter")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("FilterChannelId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("GuildId")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("InfractionChannelId")
+                        .HasColumnType("numeric(20,0)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GuildId")
                         .IsUnique();
 
-                    b.ToTable("Guild");
+                    b.ToTable("Guilds");
                 });
 
             modelBuilder.Entity("Uchuumaru.Data.Models.Infraction", b =>
@@ -93,8 +102,8 @@ namespace Uchuumaru.Migrations
                     b.Property<bool>("Completed")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("Duration")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
 
                     b.Property<int>("GuildId")
                         .HasColumnType("integer");
@@ -144,7 +153,7 @@ namespace Uchuumaru.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Uchuumaru.Data.Models.Filter", b =>

@@ -2,9 +2,9 @@
 using Discord.Commands;
 using MediatR;
 
-namespace Uchuumaru.Notifications
+namespace Uchuumaru.Notifications.Commands
 {
-    public class CommandExecutedNotification : INotification
+    public class CommandExecutedNotification : INotification, IDeconstructable<(Optional<CommandInfo>, ICommandContext, IResult)>
     {
         public Optional<CommandInfo> Command { get; }
         public ICommandContext Context { get; }

@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Discord;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using Uchuumaru.Data;
 using Uchuumaru.Data.Models;
@@ -16,13 +19,19 @@ namespace Uchuumaru.Services.Filters
         private readonly UchuumaruContext _uchuumaruContext;
 
         /// <summary>
+        /// The Discord client.
+        /// </summary>
+        private readonly DiscordSocketClient _client;
+
+        /// <summary>
         /// Constructs a new <see cref="FilterService"/> with the
         /// given injected dependencies.
         /// </summary>
         /// <param name="uchuumaruContext"></param>
-        public FilterService(UchuumaruContext uchuumaruContext)
+        public FilterService(UchuumaruContext uchuumaruContext, DiscordSocketClient client)
         {
             _uchuumaruContext = uchuumaruContext;
+            _client = client;
         }
 
         /// <inheritdoc/>
@@ -36,6 +45,35 @@ namespace Uchuumaru.Services.Filters
             _ = guild ?? throw new EntityNotFoundException<Guild>();
 
             guild.EnabledFilter = enabledFitler;
+            await _uchuumaruContext.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task ModifyFilterChannel(FilterChannelOptions options, ulong guildId, ulong channelId = 0)
+        {
+            var guild = await _uchuumaruContext
+                .Guilds
+                .Where(x => x.GuildId == guildId)
+                .FirstOrDefaultAsync();
+            
+            _ = guild ?? throw new EntityNotFoundException<Guild>();
+            
+            if (options == FilterChannelOptions.Set)
+            {
+                var channel = _client.GetChannel(channelId) as IGuildChannel;
+
+                if (channel is not ITextChannel )
+                {
+                    throw new InvalidFilterChannelException(channel.Name, channelId); 
+                }
+
+                guild.FilterChannelId = channelId;
+            }
+            else
+            {
+                guild.FilterChannelId = 0;
+            }
+
             await _uchuumaruContext.SaveChangesAsync();
         }
 
@@ -58,6 +96,7 @@ namespace Uchuumaru.Services.Filters
             return new FilterStatus
             {
                 GuildId = guild.GuildId,
+                FilterChannelId = guild.FilterChannelId,
                 Enabled = guild.EnabledFilter,
                 Expressions = expressions
             };
@@ -69,6 +108,7 @@ namespace Uchuumaru.Services.Filters
             var guild = await _uchuumaruContext
                 .Guilds
                 .Where(x => x.GuildId == guildId)
+                .Include(x => x.Filters)
                 .FirstOrDefaultAsync();
             
             _ = guild ?? throw new EntityNotFoundException<Guild>();
@@ -92,11 +132,12 @@ namespace Uchuumaru.Services.Filters
             var guild = await _uchuumaruContext
                 .Guilds
                 .Where(x => x.GuildId == guildId)
+                .Include(x => x.Filters)
                 .FirstOrDefaultAsync();
             
             _ = guild ?? throw new EntityNotFoundException<Guild>();
 
-            if (guild.Filters.Any(x => x.Expression == expression) is false)
+            if (guild.Filters.All(x => x.Expression != expression))
             {
                 throw new ExpressionDoesNotExistException(expression);
             }

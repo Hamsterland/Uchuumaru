@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Serilog;
 using Uchuumaru.Notifications;
+using Uchuumaru.Notifications.Commands;
 
 namespace Uchuumaru.Services.Commands
 {
@@ -36,18 +37,14 @@ namespace Uchuumaru.Services.Commands
         /// <returns>
         /// A <see cref="Task"/> that returns upon completion. 
         /// </returns>
-        public Task Handle(CommandExecutedNotification notification, CancellationToken cancellationToken)
+        public async Task Handle(CommandExecutedNotification notification, CancellationToken cancellationToken)
         {
             var (command, contex, result) = notification.Deconstruct();
 
-            if (result.IsSuccess is false)
+            if (!result.IsSuccess)
             {
-                _logger.Error("Command Error");
-                _logger.Error(command.Value.Name);
-                _logger.Error(result.ErrorReason ?? "No Error Reason");
+                await contex.Channel.SendMessageAsync(result.ErrorReason);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

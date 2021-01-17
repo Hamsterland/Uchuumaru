@@ -16,6 +16,9 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Uchuumaru.Data;
 using Uchuumaru.Services;
+using Uchuumaru.Services.Filters;
+using Uchuumaru.Services.Guilds;
+using Uchuumaru.Services.Infractions;
 
 namespace Uchuumaru
 {
@@ -41,13 +44,14 @@ namespace Uchuumaru
                 {
                     AlwaysDownloadUsers = true,
                     MessageCacheSize = 10000,
-                    LogLevel = LogSeverity.Info
+                    LogLevel = LogSeverity.Verbose
                 });
 
                 var commands = new CommandService(new CommandServiceConfig
                 {
                     DefaultRunMode = RunMode.Sync,
-                    LogLevel = LogSeverity.Info
+                    LogLevel = LogSeverity.Verbose,
+                    ThrowOnError = true
                 });
 
                 var interactivity = new InteractivityService(client);
@@ -65,6 +69,9 @@ namespace Uchuumaru
                     {
                         options.UseNpgsql(context.Configuration["Postgres:Connection"]);
                     })
+                    .AddGuild()
+                    .AddFilter()
+                    .AddInfractions()
                     .AddHostedService<Startup>()
                     .AddHostedService<DiscordListener>();
             })
