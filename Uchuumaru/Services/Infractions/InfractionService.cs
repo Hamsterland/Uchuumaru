@@ -25,7 +25,7 @@ namespace Uchuumaru.Services.Infractions
         }
 
         /// <inheritdoc/>
-        public async Task CreateInfraction(
+        public async Task<int> CreateInfraction(
             InfractionType type, 
             ulong guildId, 
             ulong subjectId, 
@@ -53,6 +53,21 @@ namespace Uchuumaru.Services.Infractions
             
             guild.Infractions.Add(infraction);
             await _uchuumaruContext.SaveChangesAsync();
+            return infraction.Id;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ulong> GetInfractionChannelId(ulong guildId)
+        {
+            var guild = await _uchuumaruContext
+                .Guilds
+                .Where(x => x.GuildId == guildId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+            
+            _ = guild ?? throw new EntityNotFoundException<Guild>();
+
+            return guild.InfractionChannelId; 
         }
     }
 }

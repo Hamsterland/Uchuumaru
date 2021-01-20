@@ -21,12 +21,21 @@ namespace Uchuumaru.Services.Infractions
         /// <returns>
         /// A <see cref="Task"/> that returns upon completion.
         /// </returns>
-        Task CreateInfraction(
+        Task<int> CreateInfraction(
             InfractionType type, 
             ulong guildId, 
             ulong subjectId, 
             ulong moderatorId, 
             TimeSpan duration, 
             string reason = null);
+
+        /// <summary>
+        /// Retrieves the <see cref="Guild.InfractionChannelId"/> property value. 
+        /// </summary>
+        /// <param name="guildId">The guild Id.</param>
+        /// <returns>
+        /// The Id of the guild infraction channel. 
+        /// </returns>
+        Task<ulong> GetInfractionChannelId(ulong guildId);
     }
 }
