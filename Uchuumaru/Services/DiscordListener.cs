@@ -28,6 +28,7 @@ namespace Uchuumaru.Services
             _client.MessageReceived += MessageReceived;
             _client.JoinedGuild += JoinedGuild;
             _client.LeftGuild += LeftGuild;
+            _client.UserBanned += UserBanned; 
             _commands.CommandExecuted += CommandExecuted;
             return Task.CompletedTask;
         }
@@ -37,6 +38,7 @@ namespace Uchuumaru.Services
             _client.MessageReceived -= MessageReceived;
             _client.JoinedGuild -= JoinedGuild;
             _client.LeftGuild -= LeftGuild;
+            _client.UserBanned -= UserBanned;
             _commands.CommandExecuted -= CommandExecuted;
             return Task.CompletedTask;
         }
