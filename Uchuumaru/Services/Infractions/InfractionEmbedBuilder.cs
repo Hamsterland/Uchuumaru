@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Discord;
 
 namespace Uchuumaru.Services.Infractions
@@ -42,12 +41,12 @@ namespace Uchuumaru.Services.Infractions
         /// existing embed.
         /// </summary>
         /// <param name="embed">The embed.</param>
-        public InfractionEmbedBuilder(Embed embed)
+        public InfractionEmbedBuilder(IEmbed embed)
         {
             WithTitle(embed.Title);
             WithColor(Constants.DefaultColour);
 
-            foreach (var field in embed.Fields)
+            foreach (var field in embed.Fields.Where(field => field.Name != null && field.Value != null))
             {
                 AddField(field.Name, field.Value);
             }
@@ -58,8 +57,8 @@ namespace Uchuumaru.Services.Infractions
         /// </summary>
         public int Case
         {
-            get => (int) Fields.FirstOrDefault(x => x.Name == "Subject").Value;
-            set => Fields.FirstOrDefault(x => x.Name == "Subject").Value = value;
+            get => int.Parse(Fields.FirstOrDefault(x => x.Name == "Case").Value.ToString()!);
+            set => Fields.FirstOrDefault(x => x.Name == "Case").Value = value;
         }
         
         /// <summary>
