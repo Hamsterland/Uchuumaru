@@ -53,10 +53,4 @@ namespace Uchuumaru.Data.Models
         /// </summary>
         public List<string> Expressions { get; set; }
     }
-
-    public enum FilterChannelOptions
-    {
-        Set,
-        Remove
-    }
 }

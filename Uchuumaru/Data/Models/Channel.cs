@@ -35,4 +35,10 @@ namespace Uchuumaru.Data.Models
                 .HasConversion<long>();
         }
     }
+    
+    public enum ChannelModificationOptions
+    {
+        Set,
+        Remove
+    }
 }
