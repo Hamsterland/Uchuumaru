@@ -85,7 +85,7 @@ namespace Uchuumaru.Modules
             [Summary("Sets the filter channel.")]
             public async Task Set(IGuildChannel channel)
             {
-                await _filter.ModifyFilterChannel(FilterChannelOptions.Set, Context.Guild.Id, channel.Id);
+                await _filter.ModifyFilterChannel(ChannelModificationOptions.Set, Context.Guild.Id, channel.Id);
                 await ReplyAsync($"Set the filter violation channel to <#{channel.Id}> ({channel.Id})");
             }
             
@@ -93,7 +93,7 @@ namespace Uchuumaru.Modules
             [Summary("Removes the filter channel.")]
             public async Task Remove()
             {
-                await _filter.ModifyFilterChannel(FilterChannelOptions.Remove, Context.Guild.Id);
+                await _filter.ModifyFilterChannel(ChannelModificationOptions.Remove, Context.Guild.Id);
                 await ReplyAsync("Removed the filter violation channel.");
             }
         }
