@@ -49,7 +49,7 @@ namespace Uchuumaru.Services.Filters
         }
 
         /// <inheritdoc/>
-        public async Task ModifyFilterChannel(FilterChannelOptions options, ulong guildId, ulong channelId = 0)
+        public async Task ModifyFilterChannel(ChannelModificationOptions modificationOptions, ulong guildId, ulong channelId = 0)
         {
             var guild = await _uchuumaruContext
                 .Guilds
@@ -58,7 +58,7 @@ namespace Uchuumaru.Services.Filters
             
             _ = guild ?? throw new EntityNotFoundException<Guild>();
             
-            if (options == FilterChannelOptions.Set)
+            if (modificationOptions == ChannelModificationOptions.Set)
             {
                 var channel = _client.GetChannel(channelId) as IGuildChannel;
 

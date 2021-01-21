@@ -25,13 +25,13 @@ namespace Uchuumaru.Services.Filters
         /// Throws an <see cref="InvalidFilterChannelException"/> if the specified channel is
         /// not an <see cref="Discord.ITextChannel"/>.
         /// </summary>
-        /// <param name="options">Whether to set or remove.</param>
+        /// <param name="modificationOptions">Whether to set or remove.</param>
         /// <param name="guildId">The target Guild Id.</param>
         /// <param name="channelId">The target channel Id.</param>
         /// <returns>
         /// A <see cref="Task"/> that returns upon completion.
         /// </returns>
-        Task ModifyFilterChannel(FilterChannelOptions options, ulong guildId, ulong channelId = 0);
+        Task ModifyFilterChannel(ChannelModificationOptions modificationOptions, ulong guildId, ulong channelId = 0);
 
         /// <summary>
         /// Gets the current status of the filter for a guild.  If the guild cannot be found, a

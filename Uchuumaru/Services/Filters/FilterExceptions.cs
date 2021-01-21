@@ -37,7 +37,7 @@ namespace Uchuumaru.Services.Filters
     public class InvalidFilterChannelException : Exception
     {
         /// <summary>
-        /// Constructs an ew <see cref="InvalidFilterChannelException"/>.
+        /// Constructs a new <see cref="InvalidFilterChannelException"/>.
         /// </summary>
         /// <param name="name">The channel name.</param>
         /// <param name="channelId">The channel Id.</param>
