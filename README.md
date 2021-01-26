@@ -1,7 +1,7 @@
 ﻿### Moderation made kind of easy 
 *Uchuumaru* is a moderation bot for the MyAnimeList Discord server. It encompasses infractions, filters, and user information inside an extensible command framework.
 
-####Help
+#### Help
 Please see the [Commands](https://github.com/Hamsterland/Uchuumaru/wiki/Commands) page.
 
 #### Premium
