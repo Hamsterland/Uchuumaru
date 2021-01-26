@@ -42,6 +42,27 @@ namespace Uchuumaru.Services.Infractions
         /// </summary>
         /// <param name="title">The notice title.</param>
         /// <param name="id">The infraction ID.</param>
+        /// <param name="subject">The infraction subject.</param>
+        /// <param name="moderator">The infraction moderator.</param>
+        /// <param name="reason">The infraction reason.</param>
+        public InfractionEmbedBuilder(
+            string title,
+            int id, 
+            IUser subject,
+            IUser moderator)
+        {
+            WithTitle(title);
+            WithColor(Constants.DefaultColour);
+            AddField("Case", id);
+            AddField("Subject", $"{subject} ({subject.Id})");
+            AddField("Moderator", moderator is not null ? $"{moderator} ({moderator.Id})" : "Placeholder");
+        }
+        
+        /// <summary>
+        /// Constructs a new <see cref="InfractionEmbedBuilder"/>.
+        /// </summary>
+        /// <param name="title">The notice title.</param>
+        /// <param name="id">The infraction ID.</param>
         /// <param name="duration">The infraction duration.</param>
         /// <param name="subject">The infraction subject.</param>
         /// <param name="moderator">The infraction moderator.</param>

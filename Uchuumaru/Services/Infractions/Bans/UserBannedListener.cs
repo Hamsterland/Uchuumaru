@@ -64,7 +64,7 @@ namespace Uchuumaru.Services.Infractions.Bans
                 return; 
             }
 
-            var builder = new InfractionEmbedBuilder("User Banned", id, user);
+            var builder = new InfractionEmbedBuilder("User Banned", id, user, null, null);
             var message = await infractionChannel.SendMessageAsync(embed: builder.Build());
 
             builder.Moderator = $"+infraction claim {message.Id}";

@@ -65,10 +65,11 @@ namespace Uchuumaru.Services.Infractions.Mutes
         /// 5) Sends a user unmuted message.
         /// </summary>
         /// <param name="guildId">The guild Id.</param>
+        /// <param name="moderatorId">The moderator Id.</param>
         /// <param name="id">The mute Id.</param>
         /// <returns>
         /// A <see cref="Task"/> that returns upon completion.
         /// </returns>
-        Task MuteCallback(ulong guildId, int id);
+        Task MuteCallback(ulong guildId, ulong moderatorId, int id);
     }
 }

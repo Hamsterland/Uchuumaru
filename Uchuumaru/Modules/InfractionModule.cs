@@ -9,6 +9,7 @@ namespace Uchuumaru.Modules
     [Name("Infractions")]
     [Group("infraction")]
     [Summary("Santa's little helper.")]
+    [RequireUserPermission(ChannelPermission.ManageMessages)]
     public class InfractionModule : ModuleBase<SocketCommandContext>
     {
         private readonly IInfractionService _infraction;

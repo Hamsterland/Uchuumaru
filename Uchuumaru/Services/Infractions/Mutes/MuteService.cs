@@ -59,7 +59,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
         {
             var id = await _infraction.CreateInfraction(InfractionType.Mute, guildId, subjectId, moderatorId, duration, reason);
             
-            var timer = new Timer(async _ => await MuteCallback(guildId, id),
+            var timer = new Timer(async _ => await MuteCallback(guildId, _client.CurrentUser.Id, id),
                 null,
                 duration,
                 Timeout.InfiniteTimeSpan);
@@ -101,9 +101,11 @@ namespace Uchuumaru.Services.Infractions.Mutes
 
             var builder = new InfractionEmbedBuilder("User Muted", id, duration, subject, moderator, reason); 
             var message = await infractionChannel.SendMessageAsync(embed: builder.Build());
-            
-            builder.Moderator = $"+infraction claim {message.Id}";
-            builder.Reason = $"+infraction claim {message.Id} <reason>";
+
+            if (reason is null)
+            {
+                builder.Reason = $"+infraction claim {message.Id} <reason>";
+            }
             
             await message.ModifyAsync(props => props.Embed = builder.Build());
         }
@@ -143,10 +145,12 @@ namespace Uchuumaru.Services.Infractions.Mutes
                 .Infractions
                 .Where(x => x.Type is InfractionType.Mute)
                 .FirstOrDefault(x => x.Id == id);
-
+            
+            _mutes.TryRemove(mute.Id, out var timer);
+            timer.Change(Timeout.Infinite, Timeout.Infinite);
+            
             mute.Completed = true;
             await _uchuumaruContext.SaveChangesAsync();
-            _mutes.TryRemove(mute.Id, out _);
         }
 
         /// <inheritdoc/>
@@ -166,7 +170,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
                 
                 foreach (var mute in mutes)
                 {
-                    var timer = new Timer(async _ => await MuteCallback(mute.Guild.GuildId, mute.Id),
+                    var timer = new Timer(async _ => await MuteCallback(mute.Guild.GuildId, _client.CurrentUser.Id, mute.Id),
                         null,
                         mute.RemainingTime,
                         Timeout.InfiniteTimeSpan);
@@ -179,7 +183,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
         }
         
         /// <inheritdoc/>
-        public async Task MuteCallback(ulong guildId, int id)
+        public async Task MuteCallback(ulong guildId, ulong moderatorId, int id)
         {
             // Find the guild.
             var guild = await _uchuumaruContext
@@ -202,6 +206,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
             // Remove muted role from user.
             var socketGuild = _client.GetGuild(guildId);
             var subject = socketGuild.GetUser(mute.SubjectId);
+            var moderator = socketGuild.GetUser(moderatorId);
 
             if (subject is not null)
             {
@@ -224,7 +229,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
                 return; 
             }
 
-            var embed = new InfractionEmbedBuilder("User Unmuted", mute.Id, subject).Build();
+            var embed = new InfractionEmbedBuilder("User Unmuted", mute.Id, subject, moderator).Build();
             await infractionChannel.SendMessageAsync(embed: embed);
         }
     }

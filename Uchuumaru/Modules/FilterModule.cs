@@ -11,6 +11,7 @@ namespace Uchuumaru.Modules
     [Name("Filter")]
     [Group("filter")]
     [Summary("Why doesn't alien life exist?")]
+    [RequireUserPermission(ChannelPermission.ManageMessages)]
     public class FilterModule : ModuleBase<SocketCommandContext>
     {
         private readonly IFilterService _filter;

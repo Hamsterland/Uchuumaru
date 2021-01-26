@@ -9,6 +9,7 @@ namespace Uchuumaru.Modules
 {
     [Name("User")]
     [Summary("The FBI cannot compare.")]
+    [RequireUserPermission(ChannelPermission.ManageMessages)]
     public class UserModule : ModuleBase<SocketCommandContext>
     {
         private readonly IUserService _user;

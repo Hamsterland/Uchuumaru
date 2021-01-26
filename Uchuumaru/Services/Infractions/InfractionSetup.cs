@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Uchuumaru.Services.Filters;
+using Uchuumaru.Services.Infractions.Bans;
 using Uchuumaru.Services.Infractions.Mutes;
 
 namespace Uchuumaru.Services.Infractions
@@ -19,7 +20,8 @@ namespace Uchuumaru.Services.Infractions
         {
             return collection
                 .AddSingleton<IFilterService, FilterService>()
-                .AddSingleton<IMuteService, MuteService>();
+                .AddSingleton<IMuteService, MuteService>()
+                .AddSingleton<IBanService, BanService>();
         }
     }
 }
