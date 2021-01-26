@@ -8,7 +8,7 @@ Please see the [Commands](https://github.com/Hamsterland/Uchuumaru/wiki/Commands
 There is no premium.
 
 ### Invite
-There is no invite either. See the README instructions on running your own instance.
+There is no invite either. See the instructions below on running your own instance.
 
 ### Support
 Seek answers for your God. Sorry, atheists.
