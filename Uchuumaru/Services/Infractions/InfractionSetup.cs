@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Uchuumaru.Services.Filters;
+using Uchuumaru.Services.Infractions.Mutes;
 
-namespace Uchuumaru.Services.Filters
+namespace Uchuumaru.Services.Infractions
 {
     /// <summary>
     /// Contains extensions methods for the configuration of infraction services on application
@@ -15,7 +17,9 @@ namespace Uchuumaru.Services.Filters
         /// <returns><paramref name="collection"/></returns>
         public static IServiceCollection AddInfractions(this IServiceCollection collection)
         {
-            return collection.AddSingleton<IFilterService, FilterService>();
+            return collection
+                .AddSingleton<IFilterService, FilterService>()
+                .AddSingleton<IMuteService, MuteService>();
         }
     }
 }

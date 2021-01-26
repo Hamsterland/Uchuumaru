@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,6 +16,20 @@ namespace Uchuumaru.Data.Models
         
         [Required]
         public Guild Guild { get; set; }
+
+        public List<Username> Usernames { get; set; } = new();
+        public List<Nickname> Nicknames { get; set; } = new();
+
+        public UserSummary ToUserSummary()
+        {
+            return new UserSummary
+            {
+                UserId = UserId,
+                GuildId = Guild.GuildId,
+                Usernames = Usernames.Select(username => username.Value.ToString()).ToList(),
+                Nicknames = Nicknames.Select(nickname => nickname.Value.ToString()).ToList(),
+            }; 
+        }
     }
     
     public class UserConfiguration : IEntityTypeConfiguration<User>
@@ -26,5 +42,13 @@ namespace Uchuumaru.Data.Models
                 .Property(x => x.UserId)
                 .HasConversion<long>();
         }
+    }
+
+    public class UserSummary
+    {
+        public ulong UserId { get; set; }
+        public ulong GuildId { get; set; }
+        public List<string> Usernames { get; set; }
+        public List<string> Nicknames { get; set; }
     }
 }

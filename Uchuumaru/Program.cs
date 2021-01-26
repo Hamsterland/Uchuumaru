@@ -16,9 +16,9 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Uchuumaru.Data;
 using Uchuumaru.Services;
-using Uchuumaru.Services.Filters;
 using Uchuumaru.Services.Guilds;
 using Uchuumaru.Services.Infractions;
+using Uchuumaru.Services.Users;
 
 namespace Uchuumaru
 {
@@ -72,6 +72,7 @@ namespace Uchuumaru
                     .AddGuild()
                     .AddFilter()
                     .AddInfractions()
+                    .AddUsers()
                     .AddHostedService<Startup>()
                     .AddHostedService<DiscordListener>();
             })

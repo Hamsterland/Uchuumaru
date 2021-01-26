@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Discord;
 
 namespace Uchuumaru.Services.Infractions
@@ -34,6 +35,49 @@ namespace Uchuumaru.Services.Infractions
                 : "Placeholder");
 
             AddField("Reason", reason ?? "Placeholder");
+        }
+        
+        /// <summary>
+        /// Constructs a new <see cref="InfractionEmbedBuilder"/>.
+        /// </summary>
+        /// <param name="title">The notice title.</param>
+        /// <param name="id">The infraction ID.</param>
+        /// <param name="duration">The infraction duration.</param>
+        /// <param name="subject">The infraction subject.</param>
+        /// <param name="moderator">The infraction moderator.</param>
+        /// <param name="reason">The infraction reason.</param>
+        public InfractionEmbedBuilder(
+            string title,
+            int id, 
+            TimeSpan duration,
+            IUser subject,
+            IUser moderator, 
+            string reason = null)
+        {
+            WithTitle(title);
+            WithColor(Constants.DefaultColour);
+            AddField("Case", id);
+            AddField("Subject", $"{subject} ({subject.Id})");
+            AddField("Moderator", $"{moderator} ({moderator.Id})");
+            AddField("Reason", reason ?? "Placeholder");
+            AddField("Duration", duration);
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="InfractionEmbedBuilder"/>.
+        /// </summary>
+        /// <param name="title">The notice title.</param>
+        /// <param name="id">The infraction ID.</param>
+        /// <param name="subject">The infraction subject.</param>
+        public InfractionEmbedBuilder(
+            string title,
+            int id,
+            IUser subject)
+        {
+            WithTitle(title);
+            WithColor(Constants.DefaultColour);
+            AddField("Case", id);
+            AddField("Subject", $"{subject} ({subject.Id})");
         }
 
         /// <summary>
@@ -86,6 +130,12 @@ namespace Uchuumaru.Services.Infractions
         {
             get => Fields.FirstOrDefault(x => x.Name == "Reason")?.ToString();
             set => Fields.FirstOrDefault(x => x.Name == "Reason").Value = value;
+        }
+
+        public TimeSpan Duration
+        {
+            get => TimeSpan.Parse(Fields.FirstOrDefault(x => x.Name == "Duration").Value?.ToString()!);
+            set => Fields.FirstOrDefault(x => x.Name == "Duration").Value = value;
         }
     }
 }

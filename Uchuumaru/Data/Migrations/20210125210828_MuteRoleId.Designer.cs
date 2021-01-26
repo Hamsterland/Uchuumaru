@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Uchuumaru.Data;
@@ -9,9 +10,10 @@ using Uchuumaru.Data;
 namespace Uchuumaru.Migrations
 {
     [DbContext(typeof(UchuumaruContext))]
-    partial class UchuumaruContextModelSnapshot : ModelSnapshot
+    [Migration("20210125210828_MuteRoleId")]
+    partial class MuteRoleId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,28 +137,6 @@ namespace Uchuumaru.Migrations
                     b.ToTable("Infraction");
                 });
 
-            modelBuilder.Entity("Uchuumaru.Data.Models.Nickname", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("Value");
-
-                    b.ToTable("Nickname");
-                });
-
             modelBuilder.Entity("Uchuumaru.Data.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -177,28 +157,6 @@ namespace Uchuumaru.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Uchuumaru.Data.Models.Username", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("Value");
-
-                    b.ToTable("Username");
                 });
 
             modelBuilder.Entity("Uchuumaru.Data.Models.Filter", b =>
@@ -223,17 +181,6 @@ namespace Uchuumaru.Migrations
                     b.Navigation("Guild");
                 });
 
-            modelBuilder.Entity("Uchuumaru.Data.Models.Nickname", b =>
-                {
-                    b.HasOne("Uchuumaru.Data.Models.User", "User")
-                        .WithMany("Nicknames")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Uchuumaru.Data.Models.User", b =>
                 {
                     b.HasOne("Uchuumaru.Data.Models.Guild", "Guild")
@@ -243,29 +190,11 @@ namespace Uchuumaru.Migrations
                     b.Navigation("Guild");
                 });
 
-            modelBuilder.Entity("Uchuumaru.Data.Models.Username", b =>
-                {
-                    b.HasOne("Uchuumaru.Data.Models.User", "User")
-                        .WithMany("Usernames")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Uchuumaru.Data.Models.Guild", b =>
                 {
                     b.Navigation("Filters");
 
                     b.Navigation("Infractions");
-                });
-
-            modelBuilder.Entity("Uchuumaru.Data.Models.User", b =>
-                {
-                    b.Navigation("Nicknames");
-
-                    b.Navigation("Usernames");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -22,15 +23,37 @@ namespace Uchuumaru.Data.Models
 
         [Required]
         public Guild Guild { get; set; }
-            
-        [Required]
-        public DateTime TimeInvoked { get; set; }
+
+        [Required] 
+        public DateTime TimeInvoked { get; set; } = DateTime.UtcNow;
         
         public TimeSpan Duration { get; set; }
         
         public string Reason { get; set; }
 
         public bool Completed { get; set; }
+        
+        [NotMapped]
+        public TimeSpan RemainingTime => TimeInvoked.Add(Duration).Subtract(DateTime.UtcNow);
+
+        [NotMapped]
+        public TimeSpan ElapsedTime => Duration.Subtract(RemainingTime);
+        
+        public InfractionSummary ToInfractionSummary()
+        {
+            return new()
+            {
+                Id = Id,
+                Type = Type,
+                SubjectId = SubjectId,
+                ModeratorId = ModeratorId,
+                Guild = Guild,
+                TimeInvoked = TimeInvoked,
+                Duration = Duration,
+                Reason = Reason,
+                Completed = Completed
+            }; 
+        }
     }
     
     public class InfractionConfiguration : IEntityTypeConfiguration<Infraction>
@@ -69,15 +92,15 @@ namespace Uchuumaru.Data.Models
 
     public class InfractionSummary
     {
-        public int Id { get; set; }
-        public InfractionType Type { get; set; }
-        public ulong SubjectId { get; set; }
-        public ulong ModeratorId { get; set; }
-        public Guild Guild { get; set; }
-        public DateTime TimeInvoked { get; set; }
-        public TimeSpan Duration { get; set; }
-        public string Reason { get; set; }
-        public bool Completed { get; set; }
+        public int Id { get; init; }
+        public InfractionType Type { get; init; }
+        public ulong SubjectId { get; init; }
+        public ulong ModeratorId { get; init; }
+        public Guild Guild { get; init; }
+        public DateTime TimeInvoked { get; init; }
+        public TimeSpan Duration { get; init; }
+        public string Reason { get; init; }
+        public bool Completed { get; init; }
 
         public static readonly Expression<Func<Infraction, InfractionSummary>> FromEntityProjection = infraction => new InfractionSummary
             {

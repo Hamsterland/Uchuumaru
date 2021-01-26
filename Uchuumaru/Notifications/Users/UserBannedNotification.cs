@@ -2,7 +2,7 @@
 using Discord.WebSocket;
 using MediatR;
 
-namespace Uchuumaru.Notifications.User
+namespace Uchuumaru.Notifications.Users
 {
     /// <summary>
     /// An <see cref="INotification"/> that represents information from when

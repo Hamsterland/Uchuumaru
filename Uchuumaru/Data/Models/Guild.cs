@@ -23,6 +23,8 @@ namespace Uchuumaru.Data.Models
         public List<Infraction> Infractions { get; set; } = new();
 
         public ulong InfractionChannelId { get; set; }
+
+        public ulong MuteRoleId { get; set; }
     }
     
     public class GuildConfiguration : IEntityTypeConfiguration<Guild>
@@ -39,6 +41,14 @@ namespace Uchuumaru.Data.Models
 
             builder
                 .Property(x => x.FilterChannelId)
+                .HasConversion<long>();
+
+            builder
+                .Property(x => x.InfractionChannelId)
+                .HasConversion<long>();
+
+            builder
+                .Property(x => x.MuteRoleId)
                 .HasConversion<long>();
         }
     }

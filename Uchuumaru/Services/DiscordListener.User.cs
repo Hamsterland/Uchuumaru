@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Discord.WebSocket;
-using Uchuumaru.Notifications.User;
+using Uchuumaru.Notifications.Users;
 
 namespace Uchuumaru.Services
 {
@@ -15,10 +15,40 @@ namespace Uchuumaru.Services
         /// </summary>
         /// <param name="user">The banned user.</param>
         /// <param name="guild">The guild of the ban.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
         private async Task UserBanned(SocketUser user, SocketGuild guild)
         {
             await _mediator.Publish(new UserBannedNotification(user, guild)); 
+        }
+
+        /// <summary>
+        /// This method is called on the <see cref="UserUpdated"/> event and
+        /// publishes a <see cref="UserUpdatedNotification"/>.
+        /// </summary>
+        /// <param name="before">The user before update.</param>
+        /// <param name="after">The user after update.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
+        private async Task UserUpdated(SocketUser before, SocketUser after)
+        {
+            await _mediator.Publish(new UserUpdatedNotification(before, after));
+        }
+
+        /// <summary>
+        /// This method is called on the <see cref="GuildMemberUpdated"/> event and
+        /// publishes a <see cref="GuildMemberUpdatedNotification"/>.
+        /// </summary>
+        /// <param name="before">The user before update.</param>
+        /// <param name="after">The user after update.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
+        private async Task GuildMemberUpdated(SocketGuildUser before, SocketGuildUser after)
+        {
+            await _mediator.Publish(new GuildMemberUpdatedNotification(before, after));
         }
     }
 }

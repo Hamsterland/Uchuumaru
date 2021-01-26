@@ -20,6 +20,22 @@ namespace Uchuumaru.Modules
             _filter = filter;
         }
 
+        [Command("enable")]
+        [Summary("Enables the filter.")]
+        public async Task Enable()
+        {
+            await _filter.ModifyFilter(Context.Guild.Id, true);
+            await ReplyAsync("Enabled the filter.");
+        }
+        
+        [Command("disable")]
+        [Summary("Enables the filter.")]
+        public async Task Disable()
+        {
+            await _filter.ModifyFilter(Context.Guild.Id, false);
+            await ReplyAsync("Disabled the filter.");
+        }
+        
         [Command("status")]
         [Summary("Shows information about the filter.")]
         public async Task Stats()
@@ -27,6 +43,7 @@ namespace Uchuumaru.Modules
             var status = await _filter.GetFilterStatus(Context.Guild.Id);
 
             var embed = new EmbedBuilder()
+                .WithColor(Constants.DefaultColour)
                 .WithAuthor(author => author
                     .WithName($"{Context.Guild.Name} Filter Status")
                     .WithIconUrl(Context.Guild.IconUrl))
@@ -50,7 +67,7 @@ namespace Uchuumaru.Modules
                 await sw.WriteAsync(JSON);
             }
 
-            await Context.Channel.SendFileAsync(path);
+            await Context.Channel.SendFileAsync(path, "Here is a list of all the filtered expressions.");
             File.Delete(path);
         }
         

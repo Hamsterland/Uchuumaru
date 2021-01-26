@@ -6,6 +6,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Uchuumaru.Services.Infractions.Mutes;
 
 namespace Uchuumaru.Services
 {
@@ -14,15 +15,18 @@ namespace Uchuumaru.Services
         private readonly DiscordSocketClient _client;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
+        private readonly IMuteService _mute;
 
         public Startup(
             DiscordSocketClient client, 
             IConfiguration configuration,
-            ILogger logger)
+            ILogger logger,
+            IMuteService mute)
         {
             _client = client;
             _configuration = configuration;
             _logger = logger;
+            _mute = mute;
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -39,6 +43,7 @@ namespace Uchuumaru.Services
             {
                 await _client.LoginAsync(TokenType.Bot, token);
                 await _client.StartAsync();
+                await _mute.CacheMutes();
             }
             catch (Exception ex)
             {

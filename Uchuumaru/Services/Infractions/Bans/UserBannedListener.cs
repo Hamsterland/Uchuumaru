@@ -5,7 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using MediatR;
 using Uchuumaru.Data.Models;
-using Uchuumaru.Notifications.User;
+using Uchuumaru.Notifications.Users;
 
 namespace Uchuumaru.Services.Infractions.Bans
 {
@@ -68,7 +68,7 @@ namespace Uchuumaru.Services.Infractions.Bans
             var message = await infractionChannel.SendMessageAsync(embed: builder.Build());
 
             builder.Moderator = $"+infraction claim {message.Id}";
-            builder.Reason = $"+infraction reason {message.Id} <reason>";
+            builder.Reason = $"+infraction claim {message.Id} <reason>";
             
             await message.ModifyAsync(props => props.Embed = builder.Build());
         }

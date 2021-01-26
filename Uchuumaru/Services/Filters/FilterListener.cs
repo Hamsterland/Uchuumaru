@@ -69,6 +69,12 @@ namespace Uchuumaru.Services.Filters
             }
 
             var status = await _filter.GetFilterStatus(guild.Id);
+
+            if (!status.Enabled)
+            {
+                return; 
+            }
+            
             var expressions = status.Expressions;
 
             var regexes = expressions
