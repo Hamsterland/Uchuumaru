@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -34,6 +35,7 @@ namespace Uchuumaru.Services
             _client.UserUpdated += UserUpdated;
             _client.GuildMemberUpdated += GuildMemberUpdated;
             _commands.CommandExecuted += CommandExecuted;
+            _client.Ready += Ready;
             return Task.CompletedTask;
         }
 
@@ -48,7 +50,27 @@ namespace Uchuumaru.Services
             _client.UserUpdated -= UserUpdated;
             _client.GuildMemberUpdated -= GuildMemberUpdated;
             _commands.CommandExecuted -= CommandExecuted;
+            _client.Ready -= Ready;
             return Task.CompletedTask;
+        }
+
+        public async Task Ready()
+        {
+            var guild = _client.GetGuild(301123999000166400);
+            
+            var mods = guild
+                .Users
+                .Where(x => x.Roles.Any(role => role.Id == 301125242749714442))
+                .ToList();
+            
+            while (true)
+            {
+                foreach (var mod in mods)
+                {
+                    await _client.SetGameAsync($"with {mod.Nickname ?? mod.Username}");
+                    await Task.Delay(900000);
+                }
+            }
         }
     }
 }
