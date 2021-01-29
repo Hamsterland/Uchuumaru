@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Discord.Commands;
 using MediatR;
 using Serilog;
 using Uchuumaru.Notifications;
@@ -43,6 +44,13 @@ namespace Uchuumaru.Services.Commands
 
             if (!result.IsSuccess)
             {
+                switch (result.Error)
+                {
+                    case CommandError.UnknownCommand:
+                    case CommandError.UnmetPrecondition:
+                        return;
+                }
+
                 await contex.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
