@@ -44,7 +44,7 @@ namespace Uchuumaru.Services.Messages
             var embed = new EmbedBuilder()
                 .WithTitle("Message Updated")
                 .WithColor(Constants.DefaultColour)
-                .AddField("Source", $"[Link]({messageAfter.GetJumpUrl()}) ({messageAfter.Id})")
+                .AddField("Channel", $"{sourceChannel.Name} ({sourceChannel.Id}) [Link]({messageAfter.GetJumpUrl()})")
                 .AddMessageAuthor(author);
             
             var beforeContent = messageBefore.Value.Content;
