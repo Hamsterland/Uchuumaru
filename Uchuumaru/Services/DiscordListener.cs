@@ -26,6 +26,8 @@ namespace Uchuumaru.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _client.MessageReceived += MessageReceived;
+            _client.MessageDeleted += MessageDeleted;
+            _client.MessageUpdated += MessageUpdated;
             _client.JoinedGuild += JoinedGuild;
             _client.LeftGuild += LeftGuild;
             _client.UserBanned += UserBanned;
@@ -38,6 +40,8 @@ namespace Uchuumaru.Services
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _client.MessageReceived -= MessageReceived;
+            _client.MessageDeleted -= MessageDeleted;
+            _client.MessageUpdated -= MessageUpdated;
             _client.JoinedGuild -= JoinedGuild;
             _client.LeftGuild -= LeftGuild;
             _client.UserBanned -= UserBanned;

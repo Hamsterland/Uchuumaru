@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Uchuumaru.Data.Models;
@@ -76,5 +77,15 @@ namespace Uchuumaru.Services.Infractions
         /// A <see cref="Task"/> that returns upon completion.
         /// </returns>
         Task ClaimInfraction(ulong guildId, ulong messageId, ulong moderatorId, string reason = null);
+
+        /// <summary>
+        /// Gets all the infractions for a user in a guild.
+        /// </summary>
+        /// <param name="guildId">The guild ID.</param>
+        /// <param name="userId">The user ID.</param>
+        /// <returns>
+        /// A list of all infractions.
+        /// </returns>
+        Task<IEnumerable<InfractionSummary>> GetAllInfractions(ulong guildId, ulong userId);
     }
 }

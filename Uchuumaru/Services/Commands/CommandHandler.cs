@@ -6,6 +6,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Uchuumaru.Notifications;
 using Uchuumaru.Notifications.Message;
 
@@ -70,7 +71,7 @@ namespace Uchuumaru.Services.Commands
             if (message.HasStringPrefix(prefix, ref argPos))
             {
                 var context = new SocketCommandContext(_client, message);
-                await _commands.ExecuteAsync(context, argPos, _services);
+                await _commands.ExecuteAsync(context, argPos, _services); 
             }
         }
     }

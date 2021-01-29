@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
@@ -158,7 +160,29 @@ namespace Uchuumaru.Services.Infractions
                 .FirstOrDefault(x => x.Id == id);
 
             infraction.ModeratorId = moderatorId;
+
+            if (reason is not null)
+            {
+                infraction.Reason = reason;
+            }
+            
             await _uchuumaruContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<InfractionSummary>> GetAllInfractions(ulong guildId, ulong userId)
+        {
+            var guild = await _uchuumaruContext
+                .Guilds
+                .Where(x => x.GuildId == guildId)
+                .Include(x => x.Infractions)
+                .FirstOrDefaultAsync();
+            
+            _ = guild ?? throw new EntityNotFoundException<Guild>();
+
+            return guild
+                .Infractions
+                .Where(x => x.SubjectId == userId)
+                .Select(infraction => infraction.ToInfractionSummary()); 
         }
     }
 }

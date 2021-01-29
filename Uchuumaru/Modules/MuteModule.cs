@@ -26,7 +26,7 @@ namespace Uchuumaru.Modules
             "Gagged {0} for {1}.",
             "{0} had their mouth sown shut for {1}.",
             "No one will have to listen to {0}'s opinions for {1}.",
-            "{0} Larynx surgery will last for {1}."
+            "{0}'s larynx surgery will last for {1}."
         };
 
         private readonly string[] _unmuteMessages =
@@ -38,8 +38,14 @@ namespace Uchuumaru.Modules
         
         [Command("mute")]
         [Summary("Mutes a user.")]
-        public async Task Mute(IGuildUser user, TimeSpan duration, string reason = null)
+        public async Task Mute(TimeSpan duration, IGuildUser user, [Remainder] string reason = null)
         {
+            if (duration.TotalMilliseconds < 60000)
+            {
+                await ReplyAsync("Please provide a mute duration greater than 60 seconds.");
+                return; 
+            }
+            
             var active = await _mute.GetActiveMute(Context.Guild.Id, user.Id);
             
             if (active is not null)

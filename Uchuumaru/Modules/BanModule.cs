@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -42,7 +41,7 @@ namespace Uchuumaru.Modules
         
         [Command("ban")]
         [Summary("Bans a user.")]
-        public async Task Ban(IGuildUser user, string reason = null)
+        public async Task Ban(IGuildUser user, [Remainder] string reason = null)
         {
             var bans = await Context.Guild.GetBansAsync();
 
@@ -58,19 +57,19 @@ namespace Uchuumaru.Modules
 
         [Command("hackban")]
         [Summary("Bans a user by Id.")]
-        public async Task Hackban(ulong userId, string reason = null)
+        public async Task Hackban(ulong userId, [Remainder] string reason = null)
         {
             var user = await Context.Client.Rest.GetUserAsync(userId);
 
             if (user is null)
             {
-                await ReplyAsync($"The specified user with Id {userId} no longer exists.");
+                await ReplyAsync($"The specified user with Id \"{userId}\" does not exist.");
                 return;
             }
             
             var bans = await Context.Guild.GetBansAsync();
 
-            if (bans.Any(ban => ban.User.Id != userId))
+            if (bans.Any(ban => ban.User.Id == userId))
             {
                 await ReplyAsync($"{user} is already banned.");
                 return; 

@@ -74,7 +74,8 @@ namespace Uchuumaru
                     .AddInfractions()
                     .AddUsers()
                     .AddHostedService<Startup>()
-                    .AddHostedService<DiscordListener>();
+                    .AddHostedService<DiscordListener>()
+                    .AddSingleton(new InteractivityService(client, TimeSpan.FromSeconds(30)));
             })
             .RunConsoleAsync();
     }

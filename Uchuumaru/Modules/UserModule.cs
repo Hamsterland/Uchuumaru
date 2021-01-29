@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -31,7 +30,7 @@ namespace Uchuumaru.Modules
             if (summary is null)
             {
                 usernames = new List<string> { user.Username };
-                nicknames = new List<string> { user.Nickname };
+                nicknames = new List<string> { user.Nickname ?? "No nicknames." };
             }
             else
             {
@@ -40,6 +39,11 @@ namespace Uchuumaru.Modules
                 usernames.Reverse();
 
                 nicknames = summary.Nicknames;
+
+                if (nicknames.Count == 0)
+                {
+                    nicknames = new List<string> { user.Nickname ?? "No nicknames." };
+                }
                 
                 if (user.Nickname is not null)
                 {

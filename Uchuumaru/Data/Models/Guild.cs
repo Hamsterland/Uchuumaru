@@ -24,6 +24,8 @@ namespace Uchuumaru.Data.Models
 
         public ulong InfractionChannelId { get; set; }
 
+        public ulong MessageChannelId { get; set; }
+
         public ulong MuteRoleId { get; set; }
     }
     
@@ -47,6 +49,10 @@ namespace Uchuumaru.Data.Models
                 .Property(x => x.InfractionChannelId)
                 .HasConversion<long>();
 
+            builder
+                .Property(x => x.MessageChannelId)
+                .HasConversion<long>();
+            
             builder
                 .Property(x => x.MuteRoleId)
                 .HasConversion<long>();
