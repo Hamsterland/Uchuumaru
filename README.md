@@ -14,24 +14,4 @@ There is no invite either. See the instructions below on running your own instan
 Seek answers for your God. Sorry, atheists.
 
 ### Self Hosting
-1. Create a new bot application in the Discord Developer Portal.
-2. Create a PostgreSQL database.  
-3. Create an appsettings.json file in the Uchuumaru/ directory. 
-4. Populate the file with the following content
-```json
-{
-    "Developers": [
-        ""
-    ],
-
-    "Discord": {
-        "Token":"",
-        "Prefix":""
-    },
-
-    "Postgres": {
-        "Connection":""
-    }
-}
-```
-5. `dotnet run -c Release`
+Intructions to be written.
