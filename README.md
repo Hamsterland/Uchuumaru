@@ -14,4 +14,4 @@ There is no invite either. See the instructions below on running your own instan
 Seek answers for your God. Sorry, atheists.
 
 ### Self Hosting
-Intructions to be written.
+Instructions to be written.
