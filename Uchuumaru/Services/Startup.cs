@@ -49,6 +49,15 @@ namespace Uchuumaru.Services
             {
                 _logger.Fatal(ex.Message);
             }
+            
+            var timer = new Timer(
+                async  =>
+                {
+                    Environment.Exit(0);
+                },  
+                null, 
+                TimeSpan.Zero, 
+                TimeSpan.FromSeconds(10));
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
