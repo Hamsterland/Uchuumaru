@@ -1,10 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MediatR;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Uchuumaru.Notifications;
 
 namespace Uchuumaru.Services
 {
@@ -13,15 +16,18 @@ namespace Uchuumaru.Services
         private readonly DiscordSocketClient _client;
         private readonly IMediator _mediator;
         private readonly CommandService _commands;
+        private readonly ILogger _logger;
 
         public DiscordListener(
             DiscordSocketClient client, 
             IMediator mediator, 
-            CommandService commands)
+            CommandService commands, 
+            ILogger logger)
         {
             _client = client;
             _mediator = mediator;
             _commands = commands;
+            _logger = logger;
         }
         
         public Task StartAsync(CancellationToken cancellationToken)
@@ -37,7 +43,7 @@ namespace Uchuumaru.Services
             _client.UserLeft += UserLeft;
             _client.GuildMemberUpdated += GuildMemberUpdated;
             _commands.CommandExecuted += CommandExecuted;
-            _client.Ready += Ready;
+            _client.Log += Log;
             return Task.CompletedTask;
         }
 
@@ -54,27 +60,13 @@ namespace Uchuumaru.Services
             _client.UserLeft -= UserLeft;
             _client.GuildMemberUpdated -= GuildMemberUpdated;
             _commands.CommandExecuted -= CommandExecuted;
-            _client.Ready -= Ready;
+            _client.Log -= Log;
             return Task.CompletedTask;
         }
 
-        public async Task Ready()
+        private async Task Log(LogMessage log)
         {
-            var guild = _client.GetGuild(301123999000166400);
-            
-            var mods = guild
-                .Users
-                .Where(x => x.Roles.Any(role => role.Id == 301125242749714442))
-                .ToList();
-            
-            while (true)
-            {
-                foreach (var mod in mods)
-                {
-                    await _client.SetGameAsync($"with {mod.Nickname ?? mod.Username}");
-                    await Task.Delay(900000);
-                }
-            }
+            await _mediator.Publish(new LogMessageNotification(log));
         }
     }
 }

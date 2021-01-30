@@ -9,11 +9,11 @@ using Uchuumaru.Notifications;
 
 namespace Uchuumaru.Services.Messages
 {
-    public class MessageUpdatedLogger : INotificationHandler<MessageUpdatedNotification>
+    public class MessageUpdatedListener : INotificationHandler<MessageUpdatedNotification>
     {
         private readonly UchuumaruContext _uchuumaruContext;
 
-        public MessageUpdatedLogger(UchuumaruContext uchuumaruContext)
+        public MessageUpdatedListener(UchuumaruContext uchuumaruContext)
         {
             _uchuumaruContext = uchuumaruContext;
         }

@@ -10,11 +10,11 @@ using Uchuumaru.Notifications;
 
 namespace Uchuumaru.Services.Messages
 {
-    public class MessageDeletedLogger : INotificationHandler<MessageDeletedNotification>
+    public class MessageDeletedListener : INotificationHandler<MessageDeletedNotification>
     {
         private readonly UchuumaruContext _uchuumaruContext;
 
-        public MessageDeletedLogger(UchuumaruContext uchuumaruContext)
+        public MessageDeletedListener(UchuumaruContext uchuumaruContext)
         {
             _uchuumaruContext = uchuumaruContext;
         }

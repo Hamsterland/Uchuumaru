@@ -31,7 +31,7 @@ namespace Uchuumaru
                 configuration
                     .Enrich.FromLogContext()
                     .MinimumLevel.Information()
-                    .WriteTo.Console(theme: AnsiConsoleTheme.Literate);
+                    .WriteTo.Console(theme: SystemConsoleTheme.Literate);
             })
             .ConfigureAppConfiguration((_, builder) =>
             {
@@ -45,13 +45,13 @@ namespace Uchuumaru
                 {
                     AlwaysDownloadUsers = true,
                     MessageCacheSize = 10000,
-                    LogLevel = LogSeverity.Verbose
+                    LogLevel = LogSeverity.Info
                 });
 
                 var commands = new CommandService(new CommandServiceConfig
                 {
                     DefaultRunMode = RunMode.Sync,
-                    LogLevel = LogSeverity.Verbose,
+                    LogLevel = LogSeverity.Info,
                     ThrowOnError = true
                 });
 
