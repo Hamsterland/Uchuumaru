@@ -2,26 +2,25 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Hangfire.Server;
 using Microsoft.Extensions.Hosting;
 using ILogger = Serilog.ILogger;
 
 
 namespace Uchuumaru.Services
 {
-    internal class TimedHostedService : IHostedService
+    internal class AutoRestartService : IHostedService
     {
         private readonly ILogger _logger;
         private Timer _timer;
 
-        public TimedHostedService(ILogger logger)
+        public AutoRestartService(ILogger logger)
         {
             _logger = logger;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.Fatal("Timed Background Service is starting");
+            _logger.Fatal("Application AutoRestart is starting");
 
             _timer = new Timer(async _ =>
                 {
@@ -36,7 +35,7 @@ namespace Uchuumaru.Services
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.Fatal("Timed Background Service is stopping");
+            _logger.Fatal("Application AutoRestart is stopping");
             return Task.CompletedTask;
         }
     }
