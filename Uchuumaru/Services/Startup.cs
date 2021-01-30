@@ -56,8 +56,8 @@ namespace Uchuumaru.Services
                     Environment.Exit(0);
                 },  
                 null, 
-                TimeSpan.Zero, 
-                TimeSpan.FromSeconds(30));
+                TimeSpan.FromSeconds(30), 
+                Timeout.InfiniteTimeSpan);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
