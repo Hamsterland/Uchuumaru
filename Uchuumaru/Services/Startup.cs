@@ -57,7 +57,7 @@ namespace Uchuumaru.Services
                 },  
                 null, 
                 TimeSpan.Zero, 
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
