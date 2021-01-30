@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using Hangfire;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -17,19 +19,17 @@ namespace Uchuumaru.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IMuteService _mute;
-        private readonly IHostApplicationLifetime _lifetime;
-
+        
         public Startup(
             DiscordSocketClient client, 
             IConfiguration configuration,
             ILogger logger,
-            IMuteService mute, IHostApplicationLifetime lifetime)
+            IMuteService mute)
         {
             _client = client;
             _configuration = configuration;
             _logger = logger;
             _mute = mute;
-            _lifetime = lifetime;
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -38,26 +38,26 @@ namespace Uchuumaru.Services
 
             if (string.IsNullOrEmpty(token))
             {
-                _logger.Fatal("{Message}", "The bot token was not found.");
+                _logger.Fatal("The bot token was not found.");
                 return; 
             }
 
-            try
-            {
-                await _client.LoginAsync(TokenType.Bot, token);
-                await _client.StartAsync();
-                await _mute.CacheMutes();
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("{Message}", ex.Message);
-            }
+            await _client.LoginAsync(TokenType.Bot, token);
+            await _client.StartAsync();
+            await _mute.CacheMutes();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await _client.LogoutAsync();
             await _client.StopAsync();
+        }
+        
+        public static void Initiate()
+        {
+            Console.WriteLine("EWRUFHGPQWEURGPQIEWURGPIEURBGPWEUIRBGPUEIRBGPUESRBGPOIUSERBFGOISUERGBSEHRBG");
+            Process.Start("Uchuumaru.exe");
+            Environment.Exit(0);
         }
     }
 }

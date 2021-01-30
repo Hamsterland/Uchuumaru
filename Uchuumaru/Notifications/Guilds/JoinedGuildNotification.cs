@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using System.Net.Mime;
+using Discord.WebSocket;
 using MediatR;
 
 namespace Uchuumaru.Notifications.Guilds

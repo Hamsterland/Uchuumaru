@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Hangfire;
 using Interactivity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,7 @@ namespace Uchuumaru
                     .AddUsers()
                     .AddHostedService<Startup>()
                     .AddHostedService<DiscordListener>()
+                    .AddHostedService<TimedHostedService>()
                     .AddSingleton(new InteractivityService(client, TimeSpan.FromSeconds(30)));
             })
             .RunConsoleAsync();
