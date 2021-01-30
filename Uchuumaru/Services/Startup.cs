@@ -38,7 +38,7 @@ namespace Uchuumaru.Services
 
             if (string.IsNullOrEmpty(token))
             {
-                _logger.Fatal("The bot token was not found.");
+                _logger.Fatal("{Message}", "The bot token was not found.");
                 return; 
             }
 
@@ -50,17 +50,8 @@ namespace Uchuumaru.Services
             }
             catch (Exception ex)
             {
-                _logger.Fatal(ex.Message);
+                _logger.Fatal("{Message}", ex.Message);
             }
-            
-            _ = new Timer(
-                async _  =>
-                {
-                    _lifetime.StopApplication();
-                },  
-                null, 
-                TimeSpan.FromSeconds(15), 
-                Timeout.InfiniteTimeSpan);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
