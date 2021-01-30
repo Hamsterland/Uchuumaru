@@ -31,8 +31,9 @@ namespace Uchuumaru.Modules
         public async Task Claim(ulong messageId)
         {
             await _infraction.ClaimInfraction(Context.Guild.Id, messageId, Context.User.Id);
-            await ReplyAsync($"Claimed this infraction for {Context.User} ({Context.User.Id})");
+            var message = await ReplyAsync($"Claimed this infraction for {Context.User} ({Context.User.Id})");
             await Task.Delay(3000);
+            await message.DeleteAsync();
             await Context.Message.DeleteAsync();
         }
 
@@ -41,8 +42,9 @@ namespace Uchuumaru.Modules
         public async Task Claim(ulong messageId, [Remainder] string reason)
         {
             await _infraction.ClaimInfraction(Context.Guild.Id, messageId, Context.User.Id, reason);
-            await ReplyAsync($"Claimed this infraction for {Context.User} ({Context.User.Id}) with reason \"{reason}\".");
+            var message = await ReplyAsync($"Claimed this infraction for {Context.User} ({Context.User.Id}) with reason \"{reason}\".");
             await Task.Delay(3000);
+            await message.DeleteAsync();
             await Context.Message.DeleteAsync();
         }
 
