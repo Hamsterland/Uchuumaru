@@ -88,6 +88,9 @@ namespace Uchuumaru.Migrations
                     b.Property<long>("MuteRoleId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("TrafficChannelId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GuildId")

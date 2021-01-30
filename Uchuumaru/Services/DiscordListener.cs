@@ -33,6 +33,8 @@ namespace Uchuumaru.Services
             _client.LeftGuild += LeftGuild;
             _client.UserBanned += UserBanned;
             _client.UserUpdated += UserUpdated;
+            _client.UserJoined += UserJoined;
+            _client.UserLeft += UserLeft;
             _client.GuildMemberUpdated += GuildMemberUpdated;
             _commands.CommandExecuted += CommandExecuted;
             _client.Ready += Ready;
@@ -48,6 +50,8 @@ namespace Uchuumaru.Services
             _client.LeftGuild -= LeftGuild;
             _client.UserBanned -= UserBanned;
             _client.UserUpdated -= UserUpdated;
+            _client.UserJoined -= UserJoined;
+            _client.UserLeft -= UserLeft;
             _client.GuildMemberUpdated -= GuildMemberUpdated;
             _commands.CommandExecuted -= CommandExecuted;
             _client.Ready -= Ready;

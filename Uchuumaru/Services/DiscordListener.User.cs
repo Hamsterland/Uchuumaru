@@ -50,5 +50,31 @@ namespace Uchuumaru.Services
         {
             await _mediator.Publish(new GuildMemberUpdatedNotification(before, after));
         }
+        
+        /// <summary>
+        /// This method is called on the <see cref="UserJoined"/> event and publishes
+        /// a <see cref="UserJoined"/> notification. 
+        /// </summary>
+        /// <param name="user">The user that joined.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
+        private async Task UserJoined(SocketGuildUser user)
+        {
+            await _mediator.Publish(new UserJoinedNotification(user));
+        }
+        
+        /// <summary>
+        /// This method is called on the <see cref="UserLeft"/> event and publishes
+        /// a <see cref="UserLeft"/> notification. 
+        /// </summary>
+        /// <param name="user">The user that left.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
+        private async Task UserLeft(SocketGuildUser user)
+        {
+            await _mediator.Publish(new UserLeftNotification(user));
+        }
     }
 }
