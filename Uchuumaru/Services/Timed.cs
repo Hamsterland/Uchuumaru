@@ -25,7 +25,7 @@ namespace Uchuumaru.Services
 
             _timer = new Timer(async _ =>
                 {
-                    Process.Start("Uchuumaru.exe");
+                    Process.Start("Uchuumaru");
                     Environment.Exit(0);
                 }, null, TimeSpan.FromSeconds(5), 
                 Timeout.InfiniteTimeSpan);
