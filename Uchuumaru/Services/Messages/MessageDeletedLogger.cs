@@ -33,19 +33,22 @@ namespace Uchuumaru.Services.Messages
 
             var messageLogChannelId = guild.MessageChannelId;
 
-            if (messageLogChannelId == 0 || !deletedMessage.HasValue)
+            if (messageLogChannelId == 0)
             {
                 return;
             }
-            
+
+            if (!deletedMessage.HasValue)
+            {
+                return;
+            }
             
             var content = deletedMessage.Value.Content;
             var author = deletedMessage.Value.Author;
             var attachments = deletedMessage.Value.Attachments;
             var reactions = deletedMessage.Value.Reactions;
             var pinned = deletedMessage.Value.IsPinned;
-            var id = deletedMessage.Value.Id;
-            
+
             var embed = new EmbedBuilder()
                 .WithTitle("Message Deleted")
                 .AddChannel(sourceChannel)
