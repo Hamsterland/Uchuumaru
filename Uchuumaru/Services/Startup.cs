@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -16,17 +17,19 @@ namespace Uchuumaru.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IMuteService _mute;
+        private readonly IHostApplicationLifetime _lifetime;
 
         public Startup(
             DiscordSocketClient client, 
             IConfiguration configuration,
             ILogger logger,
-            IMuteService mute)
+            IMuteService mute, IHostApplicationLifetime lifetime)
         {
             _client = client;
             _configuration = configuration;
             _logger = logger;
             _mute = mute;
+            _lifetime = lifetime;
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -50,13 +53,13 @@ namespace Uchuumaru.Services
                 _logger.Fatal(ex.Message);
             }
             
-            var timer = new Timer(
-                async  =>
+            _ = new Timer(
+                async _  =>
                 {
-                    Environment.Exit(0);
+                    _lifetime.StopApplication();
                 },  
                 null, 
-                TimeSpan.FromSeconds(30), 
+                TimeSpan.FromSeconds(15), 
                 Timeout.InfiniteTimeSpan);
         }
 
