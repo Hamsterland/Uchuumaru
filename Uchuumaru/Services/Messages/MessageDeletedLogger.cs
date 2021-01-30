@@ -48,7 +48,7 @@ namespace Uchuumaru.Services.Messages
             
             var embed = new EmbedBuilder()
                 .WithTitle("Message Deleted")
-                .AddField("Id", id)
+                .AddChannel(sourceChannel)
                 .AddMessageAuthor(author)
                 .WithColor(Constants.DefaultColour);
             
@@ -57,8 +57,6 @@ namespace Uchuumaru.Services.Messages
                 embed.AddContent(content);
             }
 
-            embed.AddChannel(sourceChannel);
-            
             if (attachments.Count > 0)
             {
                 embed.AddAttachments(attachments);
