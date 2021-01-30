@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data.SqlTypes;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -43,7 +44,9 @@ namespace Uchuumaru.Services
             _client.UserLeft += UserLeft;
             _client.GuildMemberUpdated += GuildMemberUpdated;
             _commands.CommandExecuted += CommandExecuted;
+            
             _client.Log += Log;
+            _client.Ready += Ready;
             return Task.CompletedTask;
         }
 
@@ -67,6 +70,32 @@ namespace Uchuumaru.Services
         private async Task Log(LogMessage log)
         {
             await _mediator.Publish(new LogMessageNotification(log));
+        }
+        
+        private Task Ready()
+        {
+            _client.Ready -= Ready; 
+            
+            Task.Run(async () =>
+            {
+                var guild = _client.GetGuild(301123999000166400);
+    
+                var mods = guild
+                    .Users
+                    .Where(x => x.Roles.Any(role => role.Id == 301125242749714442))
+                    .ToList();
+    
+                while (true)
+                {
+                    foreach (var mod in mods)
+                    {
+                        await _client.SetGameAsync($"with {mod.Nickname ?? mod.Username}");
+                        await Task.Delay(900000);
+                    }
+                }
+            });
+            
+            return Task.CompletedTask;
         }
     }
 }
