@@ -14,13 +14,6 @@ namespace Uchuumaru.Modules
     [RequireDeveloper]
     public class DeveloperModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IHostApplicationLifetime _lifetime;
-
-        public DeveloperModule(IHostApplicationLifetime lifetime)
-        {
-            _lifetime = lifetime;
-        }
-
         [Command("echo")]
         [Summary("Echoes a message.")]
         public async Task Echo([Remainder] string message)
@@ -33,6 +26,15 @@ namespace Uchuumaru.Modules
         public Task Restart()
         {
             Process.Start("Uchuumaru.exe");
+            Environment.Exit(0);
+            return Task.CompletedTask;
+        }
+        
+        
+        [Command("shutdown")]
+        [Summary("Shuts down the bot.")]
+        public Task Shutdown()
+        {
             Environment.Exit(0);
             return Task.CompletedTask;
         }
