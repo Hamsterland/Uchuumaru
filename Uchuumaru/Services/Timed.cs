@@ -26,7 +26,7 @@ namespace Uchuumaru.Services
                 {
                     Process.Start("Uchuumaru");
                     Environment.Exit(0);
-                }, null, TimeSpan.FromSeconds(5), 
+                }, null, TimeSpan.FromHours(1), 
                 Timeout.InfiniteTimeSpan);
 
             return Task.CompletedTask;
