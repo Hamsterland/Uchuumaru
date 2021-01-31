@@ -83,7 +83,7 @@ namespace Uchuumaru.Services
                 _logger.Fatal("Task.Run() Hit");
                 var guild = _client.GetGuild(301123999000166400);
     
-                _logger.Fatal($"Guild is: {guild?.Name}");
+                _logger.Fatal($"Guild is null?: {guild is null}");
                 
                 var mods = guild
                     .Users
