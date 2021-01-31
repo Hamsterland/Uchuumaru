@@ -61,6 +61,7 @@ namespace Uchuumaru.Services.Users
             IMessageChannel channel)
         {
             var embed = new EmbedBuilder()
+                .WithThumbnailUrl(user.GetAvatarUrl())
                 .WithTitle(title)
                 .WithColor(color)
                 .AddField("User", $"{user} ({user.Id})")
