@@ -1,4 +1,5 @@
-﻿using System.Data.SqlTypes;
+﻿using System;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,23 +75,31 @@ namespace Uchuumaru.Services
         
         private Task Ready()
         {
+            _logger.Fatal("Ready Hit");
             _client.Ready -= Ready; 
             
             Task.Run(async () =>
             {
+                _logger.Fatal("Task.Run() Hit");
                 var guild = _client.GetGuild(301123999000166400);
     
+                _logger.Fatal($"Guild is: {guild?.Name}");
+                
                 var mods = guild
                     .Users
                     .Where(x => x.Roles.Any(role => role.Id == 301125242749714442))
                     .ToList();
     
+                _logger.Fatal($"Mods found.");
+                
                 while (true)
                 {
                     foreach (var mod in mods)
                     {
                         await _client.SetGameAsync($"with {mod.Nickname ?? mod.Username}");
+                        _logger.Fatal($"Set game");
                         await Task.Delay(900000);
+                        _logger.Fatal($"Task waiting");
                     }
                 }
             });
