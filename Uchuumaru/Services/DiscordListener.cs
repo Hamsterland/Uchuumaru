@@ -91,6 +91,7 @@ namespace Uchuumaru.Services
                     .ToList();
     
                 _logger.Fatal($"Mods found.");
+                _logger.Fatal($"Mods: {mods.Count}");
                 
                 while (true)
                 {
