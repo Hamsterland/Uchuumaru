@@ -23,10 +23,9 @@ namespace Uchuumaru.Services.Messages
         {
             var deletedMessage = notification.Message;
             var sourceChannel = notification.Channel;
-
             var sourceGuild = (sourceChannel as IGuildChannel).Guild;
             var sourceGuildId = sourceGuild.Id;
-            
+
             var guild = await _uchuumaruContext
                 .Guilds
                 .FirstOrDefaultAsync(x => x.GuildId == sourceGuildId, cancellationToken);
@@ -42,19 +41,23 @@ namespace Uchuumaru.Services.Messages
             {
                 return;
             }
-            
+
             var content = deletedMessage.Value.Content;
             var author = deletedMessage.Value.Author;
             var attachments = deletedMessage.Value.Attachments;
             var reactions = deletedMessage.Value.Reactions;
             var pinned = deletedMessage.Value.IsPinned;
 
+            if (author.IsBot)
+            {
+                return;
+            }
             var embed = new EmbedBuilder()
                 .WithTitle("Message Deleted")
                 .AddChannel(sourceChannel)
                 .AddMessageAuthor(author)
                 .WithColor(Constants.DefaultColour);
-            
+
             if (!string.IsNullOrEmpty(content))
             {
                 embed.AddContent(content);
@@ -74,12 +77,12 @@ namespace Uchuumaru.Services.Messages
             {
                 embed.AddField("Pinned", true);
             }
-                    
+
             var messageLogChannel = await sourceGuild.GetChannelAsync(messageLogChannelId) as IMessageChannel;
             await messageLogChannel.SendMessageAsync(embed: embed.Build());
         }
     }
-    
+
     public static class MessageDeletedExtensions
     {
         public static EmbedBuilder AddContent(this EmbedBuilder builder, string content)
@@ -91,7 +94,7 @@ namespace Uchuumaru.Services.Messages
         {
             return builder.AddField("Author", $"{user} ({user.Id})");
         }
-        
+
         public static EmbedBuilder AddAttachments(this EmbedBuilder builder, IEnumerable<IAttachment> attachments)
         {
             var sb = new StringBuilder();
@@ -104,16 +107,17 @@ namespace Uchuumaru.Services.Messages
 
             return builder.AddField("Attachments", sb.ToString());
         }
-        
+
         public static EmbedBuilder AddChannel(this EmbedBuilder builder, IChannel channel)
         {
             return builder.AddField("Channel", $"{channel.Name} ({channel.Id})");
         }
-        
-        public static EmbedBuilder AddReactions(this EmbedBuilder builder, IReadOnlyDictionary<IEmote, ReactionMetadata> reactions)
+
+        public static EmbedBuilder AddReactions(this EmbedBuilder builder,
+            IReadOnlyDictionary<IEmote, ReactionMetadata> reactions)
         {
             var sb = new StringBuilder();
-            
+
             // ReSharper disable once UseDeconstruction
             foreach (var reaction in reactions)
             {

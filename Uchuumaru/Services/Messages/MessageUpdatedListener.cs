@@ -33,7 +33,17 @@ namespace Uchuumaru.Services.Messages
 
             var messageLogChannelId = guild.MessageChannelId; 
 
-            if (messageLogChannelId == 0 || !messageBefore.HasValue)
+            if (messageLogChannelId == 0)
+            {
+                return;
+            }
+
+            if (!messageBefore.HasValue)
+            {
+                return;
+            }
+
+            if (messageBefore.Value.Author.IsBot)
             {
                 return;
             }
