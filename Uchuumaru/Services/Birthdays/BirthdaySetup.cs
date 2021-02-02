@@ -16,9 +16,7 @@ namespace Uchuumaru.Services.Birthdays
         /// <returns><paramref name="collection"/></returns>
         public static IServiceCollection AddBirthdays(this IServiceCollection collection)
         {
-            return collection
-                .AddHostedService<BirthdayHostedService>()
-                .AddSingleton<IBirthdayService, BirthdayService>();
+            return collection.AddSingleton<IBirthdayService, BirthdayService>();
         }
     }
 }

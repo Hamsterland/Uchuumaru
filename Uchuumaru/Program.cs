@@ -78,6 +78,7 @@ namespace Uchuumaru
                     .AddBirthdays()
                     .AddHostedService<StartupHostedService>()
                     .AddHostedService<DiscordHostedService>()
+                    .AddHostedService<BirthdayHostedService>()
                     .AddSingleton(new InteractivityService(client, TimeSpan.FromSeconds(30)));
             })
             .RunConsoleAsync();
