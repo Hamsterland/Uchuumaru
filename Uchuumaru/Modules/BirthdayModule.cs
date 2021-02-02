@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Discord.Commands;
-using Humanizer;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Birthdays;
 
 namespace Uchuumaru.Modules
@@ -9,6 +9,7 @@ namespace Uchuumaru.Modules
     [Name("Birthday")]
     [Group("birthday")]
     [Summary("Happy Birthday!")]
+    [RequireModerator]
     public class BirthdayModule : ModuleBase<SocketCommandContext>
     {
         private readonly IBirthdayService _birthday;
