@@ -10,6 +10,7 @@
       <PackageReference Include="Discord.InteractivityAddon" Version="2.1.1" />
       <PackageReference Include="Discord.Net" Version="2.2.0" />
       <PackageReference Include="Hangfire" Version="1.7.19" />
+      <PackageReference Include="Humanizer.Core" Version="2.8.26" />
       <PackageReference Include="MediatR" Version="9.0.0" />
       <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />

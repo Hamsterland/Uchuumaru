@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Discord.Commands;
+using Humanizer;
 using Uchuumaru.Services.Birthdays;
 
 namespace Uchuumaru.Modules
@@ -23,6 +24,7 @@ namespace Uchuumaru.Modules
         {
             var utc = date.ToUniversalTime();
             await _birthday.SetBirthday(Context.User.Id, utc);
+            await ReplyAsync($"{Context.User.Mention} I set your birthday to {date.Month}/{date.Day}.");
         }
 
         [Command("remove")]
@@ -31,6 +33,7 @@ namespace Uchuumaru.Modules
         {
             // default is 01/01/0001 00:00:00
             await _birthday.SetBirthday(Context.User.Id, default);
+            await ReplyAsync($"{Context.User.Mention} I removed your birthday.");
         }
     }
 }

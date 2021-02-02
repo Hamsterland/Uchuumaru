@@ -21,6 +21,7 @@ using Uchuumaru.Services.Birthdays;
 using Uchuumaru.Services.Guilds;
 using Uchuumaru.Services.Infractions;
 using Uchuumaru.Services.Users;
+using Uchuumaru.TypeReaders;
 
 namespace Uchuumaru
 {
@@ -64,6 +65,7 @@ namespace Uchuumaru
                     .AddSingleton(interactivity)
                     .AddSingleton(provider =>
                     {
+                        commands.AddTypeReader(typeof(DateTime), new DateTimeTypeReader());
                         commands.AddModulesAsync(Assembly.GetEntryAssembly(), provider);
                         return commands;
                     })
