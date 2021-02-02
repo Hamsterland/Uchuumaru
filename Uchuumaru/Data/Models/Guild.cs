@@ -28,6 +28,8 @@ namespace Uchuumaru.Data.Models
 
         public ulong TrafficChannelId { get; set; }
 
+        public ulong BirthdayChannelId { get; set; }
+
         public ulong MuteRoleId { get; set; }
     }
     
@@ -62,6 +64,11 @@ namespace Uchuumaru.Data.Models
             builder
                 .Property(x => x.MuteRoleId)
                 .HasConversion<long>();
+
+            builder
+                .Property(x => x.BirthdayChannelId)
+                .HasConversion<long>();
+
         }
     }
 }

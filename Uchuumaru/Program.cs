@@ -17,6 +17,7 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Uchuumaru.Data;
 using Uchuumaru.Services;
+using Uchuumaru.Services.Birthdays;
 using Uchuumaru.Services.Guilds;
 using Uchuumaru.Services.Infractions;
 using Uchuumaru.Services.Users;
@@ -70,12 +71,13 @@ namespace Uchuumaru
                     {
                         options.UseNpgsql(context.Configuration["Postgres:Connection"]);
                     })
-                    .AddGuild()
-                    .AddFilter()
+                    .AddGuilds()
+                    .AddFilters()
                     .AddInfractions()
                     .AddUsers()
-                    .AddHostedService<Startup>()
-                    .AddHostedService<DiscordListener>()
+                    .AddBirthdays()
+                    .AddHostedService<StartupHostedService>()
+                    .AddHostedService<DiscordHostedService>()
                     .AddSingleton(new InteractivityService(client, TimeSpan.FromSeconds(30)));
             })
             .RunConsoleAsync();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -12,6 +11,10 @@ using Uchuumaru.Notifications.Users;
 
 namespace Uchuumaru.Services.Users
 {
+    /// <summary>
+    /// An <see cref="INotificationHandler{TNotification}"/> that listens to the <see cref="UserJoinedNotification"/> and
+    /// <see cref="UserLeftNotification"/>.
+    /// </summary>
     public class UserTrafficListener : INotificationHandler<UserJoinedNotification>, INotificationHandler<UserLeftNotification>
     {
         /// <summary>
@@ -28,6 +31,14 @@ namespace Uchuumaru.Services.Users
             _uchuumaruContext = uchuumaruContext;
         }
 
+        /// <summary>
+        /// Sends the a traffic message to the Guild traffic channel when a user joins.
+        /// </summary>
+        /// <param name="notification">The received notification.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
         public async Task Handle(UserJoinedNotification notification, CancellationToken cancellationToken)
         {
             var user = notification.User;
@@ -41,6 +52,14 @@ namespace Uchuumaru.Services.Users
             await SendTraffic("User Joined", user, Color.Green, channel);
         }
 
+        /// <summary>
+        /// Sends the a traffic message to the Guild traffic channel when a user leaves.
+        /// </summary>
+        /// <param name="notification">The received notification.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
         public async Task Handle(UserLeftNotification notification, CancellationToken cancellationToken)
         {
             var user = notification.User;
@@ -54,7 +73,17 @@ namespace Uchuumaru.Services.Users
             await SendTraffic("User Left", user, Color.Red, channel);
         }
 
-        private async Task SendTraffic(
+        /// <summary>
+        /// Builds and sends a traffic message.
+        /// </summary>
+        /// <param name="title">The title.</param>
+        /// <param name="user">The user.</param>
+        /// <param name="color">The colour.</param>
+        /// <param name="channel">The traffic channel.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that returns upon completion.
+        /// </returns>
+        private static async Task SendTraffic(
             string title, 
             IUser user, 
             Color color, 
@@ -70,6 +99,14 @@ namespace Uchuumaru.Services.Users
             await channel.SendMessageAsync(embed: embed);
         }
         
+        /// <summary>
+        /// Gets a Guild's traffic channel.
+        /// </summary>
+        /// <param name="socketGuild">The Guild.</param>
+        /// <returns>
+        /// An <see cref="IMessageChannel"/> representation of the Guild's traffic
+        /// channel.
+        /// </returns>
         private async Task<IMessageChannel> GetTrafficChannel(SocketGuild socketGuild)
         {
             var guild = await _uchuumaruContext

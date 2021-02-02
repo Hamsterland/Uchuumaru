@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +21,11 @@ namespace Uchuumaru.Data.Models
         public List<Username> Usernames { get; set; } = new();
         public List<Nickname> Nicknames { get; set; } = new();
 
+        public DateTime Birthday { get; set; }
+
         public UserSummary ToUserSummary()
         {
-            return new UserSummary
+            return new()
             {
                 UserId = UserId,
                 GuildId = Guild.GuildId,

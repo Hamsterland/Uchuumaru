@@ -6,7 +6,7 @@ using Uchuumaru.Notifications.Message;
 
 namespace Uchuumaru.Services
 {
-    public partial class DiscordListener
+    public partial class DiscordHostedService
     {
         public async Task MessageReceived(SocketMessage message)
         {

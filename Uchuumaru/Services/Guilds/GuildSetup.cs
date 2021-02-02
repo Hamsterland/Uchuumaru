@@ -13,7 +13,7 @@ namespace Uchuumaru.Services.Guilds
         /// </summary>
         /// <param name="collection">The service collection.</param>
         /// <returns><paramref name="collection"/></returns>
-        public static IServiceCollection AddGuild(this IServiceCollection collection)
+        public static IServiceCollection AddGuilds(this IServiceCollection collection)
         {
             return collection.AddSingleton<IGuildService, GuildService>();
         }

@@ -7,7 +7,7 @@ namespace Uchuumaru.Services
     /// <summary>
     /// Events related to users.
     /// </summary>
-    public partial class DiscordListener
+    public partial class DiscordHostedService
     {
         /// <summary>
         /// This method is called on the <see cref="UserBanned"/> event and

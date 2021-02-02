@@ -5,7 +5,7 @@ using Uchuumaru.Notifications.Commands;
 
 namespace Uchuumaru.Services
 {
-    public partial class DiscordListener
+    public partial class DiscordHostedService
     {
         public async Task CommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {

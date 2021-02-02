@@ -70,6 +70,9 @@ namespace Uchuumaru.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
+                    b.Property<long>("BirthdayChannelId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("EnabledFilter")
                         .HasColumnType("boolean");
 
@@ -169,6 +172,9 @@ namespace Uchuumaru.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("GuildId")
                         .HasColumnType("integer");

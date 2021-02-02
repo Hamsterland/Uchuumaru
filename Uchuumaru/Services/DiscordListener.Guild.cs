@@ -5,7 +5,7 @@ using Uchuumaru.Services.Guilds;
 
 namespace Uchuumaru.Services
 {
-    public partial class DiscordListener
+    public partial class DiscordHostedService
     {
         public async Task JoinedGuild(SocketGuild guild)
         {

@@ -13,14 +13,14 @@ using Uchuumaru.Notifications;
 
 namespace Uchuumaru.Services
 {
-    public partial class DiscordListener : IHostedService
+    public partial class DiscordHostedService : IHostedService
     {
         private readonly DiscordSocketClient _client;
         private readonly IMediator _mediator;
         private readonly CommandService _commands;
         private readonly ILogger _logger;
 
-        public DiscordListener(
+        public DiscordHostedService(
             DiscordSocketClient client, 
             IMediator mediator, 
             CommandService commands, 

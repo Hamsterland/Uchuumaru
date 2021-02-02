@@ -13,14 +13,14 @@ using Uchuumaru.Services.Infractions.Mutes;
 
 namespace Uchuumaru.Services
 {
-    public class Startup : IHostedService
+    public class StartupHostedService : IHostedService
     {
         private readonly DiscordSocketClient _client;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IMuteService _mute;
         
-        public Startup(
+        public StartupHostedService(
             DiscordSocketClient client, 
             IConfiguration configuration,
             ILogger logger,

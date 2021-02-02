@@ -13,7 +13,7 @@ namespace Uchuumaru.Services.Infractions
         /// </summary>
         /// <param name="collection">The service collection.</param>
         /// <returns><paramref name="collection"/></returns>
-        public static IServiceCollection AddFilter(this IServiceCollection collection)
+        public static IServiceCollection AddFilters(this IServiceCollection collection)
         {
             return collection.AddSingleton<IInfractionService, InfractionService>();
         }
