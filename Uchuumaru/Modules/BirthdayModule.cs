@@ -10,7 +10,13 @@ namespace Uchuumaru.Modules
     [Name("Birthday")]
     [Group("birthday")]
     [Summary("Happy Birthday!")]
-    [RequireModerator]
+    [RequireRoles(
+        301125242749714442,     // Moderator
+        389930012855238657,     // Retired Moderator
+        302310311074070531,     // Site Admin
+        301127756467535885,     // Site Staff
+        312948066661695488,     // Retired Site Staff
+        674424406600319018)]    // Former Admin
     public class BirthdayModule : ModuleBase<SocketCommandContext>
     {
         private readonly IBirthdayService _birthday;
@@ -28,7 +34,7 @@ namespace Uchuumaru.Modules
             await _birthday.SetBirthday(Context.User.Id, utc);
             await ReplyAsync($"{Context.User.Mention}, I set your birthday to {date.Month}/{date.Day}.");
         }
-        
+
         [Command("set")]
         [Summary("Sets a birthday for a user.")]
         public async Task Set(IGuildUser user, DateTime date)
@@ -46,7 +52,7 @@ namespace Uchuumaru.Modules
             await _birthday.SetBirthday(Context.User.Id, default);
             await ReplyAsync($"{Context.User.Mention} I removed your birthday.");
         }
-        
+
         [Command("remove")]
         [Summary("Removes a birthday for a user.")]
         public async Task Remove(IGuildUser user)
