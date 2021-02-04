@@ -75,7 +75,7 @@ namespace Uchuumaru.Services.Birthdays
 
             // Each List<User> share the same Guild.
             var birthdayGroups = users
-                .Where(x => x.Birthday.Day.Equals(DateTime.UtcNow.Day))
+                .Where(x => x.Birthday.Day.Equals(DateTime.UtcNow.Day) && x.Birthday.Month.Equals(DateTime.UtcNow.Month))
                 .GroupBy(user => user.Guild.Id)
                 .Select(group => group.ToList())
                 .ToList();
@@ -91,7 +91,6 @@ namespace Uchuumaru.Services.Birthdays
                 {
                     var socketGuild = _client.GetGuild(user.Guild.GuildId);
                     var socketUser = socketGuild.GetUser(user.UserId);
-                    
                     var birthdayId = guild.BirthdayChannelId;
 
                     if (birthdayId == 0)
