@@ -49,7 +49,7 @@ namespace Uchuumaru.Services.Users
                 return;
             }
 
-            await SendTraffic("User Joined", user, Color.Green, channel);
+            await SendTraffic(TrafficOptions.Joined,"User Joined", user, Color.Green, channel);
         }
 
         /// <summary>
@@ -70,43 +70,41 @@ namespace Uchuumaru.Services.Users
                 return;
             }
 
-            await SendTraffic("User Left", user, Color.Red, channel);
+            await SendTraffic(TrafficOptions.Left, "User Left", user, Color.Red, channel);
         }
-
-        /// <summary>
-        /// Builds and sends a traffic message.
-        /// </summary>
-        /// <param name="title">The title.</param>
-        /// <param name="user">The user.</param>
-        /// <param name="color">The colour.</param>
-        /// <param name="channel">The traffic channel.</param>
-        /// <returns>
-        /// A <see cref="Task"/> that returns upon completion.
-        /// </returns>
+        
         private static async Task SendTraffic(
+            TrafficOptions options,
             string title, 
-            IUser user, 
+            IGuildUser user, 
             Color color, 
             IMessageChannel channel)
         {
-            var embed = new EmbedBuilder()
+            var builder = new EmbedBuilder()
                 .WithThumbnailUrl(user.GetAvatarUrl())
                 .WithTitle(title)
                 .WithColor(color)
-                .AddField("User", $"{user} ({user.Id})")
-                .Build();
+                .AddField("User", $"{user} ({user.Id})");
 
-            await channel.SendMessageAsync(embed: embed);
+            if (options == TrafficOptions.Joined)
+            {
+                if (user.JoinedAt.HasValue)
+                {
+                    builder.AddField("Joined At", $"{user.JoinedAt.Value.UtcDateTime} UTC");
+                }
+
+                builder.AddField("Account Created", $"{user.CreatedAt.Date} UTC");
+            }
+
+            await channel.SendMessageAsync(embed: builder.Build());
+        }
+
+        private enum TrafficOptions
+        {
+            Joined,
+            Left
         }
         
-        /// <summary>
-        /// Gets a Guild's traffic channel.
-        /// </summary>
-        /// <param name="socketGuild">The Guild.</param>
-        /// <returns>
-        /// An <see cref="IMessageChannel"/> representation of the Guild's traffic
-        /// channel.
-        /// </returns>
         private async Task<IMessageChannel> GetTrafficChannel(SocketGuild socketGuild)
         {
             var guild = await _uchuumaruContext
