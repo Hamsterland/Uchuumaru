@@ -42,7 +42,7 @@ namespace Uchuumaru.Modules
                 .AppendLine($"There is no invite either. See the [GitHub instructions](https://github.com/Hamsterland/Uchuumaru) on running your own instance of {_client.CurrentUser.Username}.")
                 .AppendLine()
                 .AppendLine(Format.Bold("Support"))
-                .Append("Seek answers from your God. Sorry, atheists.")
+                .AppendLine("Seek answers from your God. Sorry, atheists.")
                 .AppendLine()
                 .AppendLine(Format.Bold("Credit"))
                 .AppendLine("Uchuu#9609 (developer) ([Profile](https://myanimelist.net/profile/Uchuuu))")
