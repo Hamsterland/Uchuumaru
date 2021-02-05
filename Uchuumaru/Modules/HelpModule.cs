@@ -43,6 +43,9 @@ namespace Uchuumaru.Modules
                 .AppendLine()
                 .AppendLine(Format.Bold("Support"))
                 .Append("Seek answers from your God. Sorry, atheists.")
+                .AppendLine()
+                .AppendLine(Format.Bold("Credit"))
+                .AppendLine("Uchuu#9609 (developer) ([Profile](https://myanimelist.net/profile/Uchuuu))")
                 .ToString();
 
             builder.WithDescription(description);
