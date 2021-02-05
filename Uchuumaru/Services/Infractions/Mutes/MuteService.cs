@@ -208,11 +208,13 @@ namespace Uchuumaru.Services.Infractions.Mutes
             var subject = socketGuild.GetUser(mute.SubjectId);
             var moderator = socketGuild.GetUser(moderatorId);
 
-            if (subject is not null)
+            if (subject is null)
             {
-                var muteRole = socketGuild.GetRole(guild.MuteRoleId);
-                await subject.RemoveRoleAsync(muteRole);
+                return;
             }
+            
+            var muteRole = socketGuild.GetRole(guild.MuteRoleId);
+            await subject.RemoveRoleAsync(muteRole); ;
 
             // If the channel was never set.
             if (guild.InfractionChannelId == 0)
