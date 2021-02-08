@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Infractions.Mutes;
 
 namespace Uchuumaru.Modules
 {
     [Name("Mute")]
     [Summary("Silence, wench.")]
-    [RequireUserPermission(GuildPermission.MuteMembers)]
+    [RequireModeratorOrDeveloper]
     public class MuteModule : ModuleBase<SocketCommandContext>
     {
         private readonly IMuteService _mute;

@@ -2,6 +2,7 @@
 using Uchuumaru.Services.Filters;
 using Uchuumaru.Services.Infractions.Bans;
 using Uchuumaru.Services.Infractions.Mutes;
+using Uchuumaru.Services.Infractions.Warns;
 
 namespace Uchuumaru.Services.Infractions
 {
@@ -21,7 +22,8 @@ namespace Uchuumaru.Services.Infractions
             return collection
                 .AddSingleton<IFilterService, FilterService>()
                 .AddSingleton<IMuteService, MuteService>()
-                .AddSingleton<IBanService, BanService>();
+                .AddSingleton<IBanService, BanService>()
+                .AddSingleton<IWarnService, WarnService>();
         }
     }
 }

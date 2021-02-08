@@ -3,13 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Infractions.Bans;
 
 namespace Uchuumaru.Modules
 {
     [Name("Ban")]
     [Summary("7DS.")]
-    [RequireUserPermission(GuildPermission.BanMembers)]
+    [RequireModeratorOrDeveloper]
     public class BanModule : ModuleBase<SocketCommandContext>
     {
         private readonly IBanService _ban;

@@ -7,6 +7,7 @@ using Interactivity;
 using Interactivity.Pagination;
 using MoreLinq;
 using Uchuumaru.Data.Models;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Infractions;
 
 namespace Uchuumaru.Modules
@@ -14,7 +15,7 @@ namespace Uchuumaru.Modules
     [Name("Infractions")]
     [Group("infraction")]
     [Summary("Santa's little helper.")]
-    [RequireUserPermission(ChannelPermission.ManageMessages)]
+    [RequireModeratorOrDeveloper]
     public class InfractionModule : ModuleBase<SocketCommandContext>
     {
         private readonly IInfractionService _infraction;

@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Users;
 
 namespace Uchuumaru.Modules
 {
     [Name("User")]
     [Summary("The FBI cannot compare.")]
-    [RequireUserPermission(ChannelPermission.ManageMessages)]
+    [RequireModeratorOrDeveloper]
     public class UserModule : ModuleBase<SocketCommandContext>
     {
         private readonly IUserService _user;

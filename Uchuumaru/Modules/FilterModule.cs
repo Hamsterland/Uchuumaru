@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Uchuumaru.Data.Models;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Filters;
 
 namespace Uchuumaru.Modules
@@ -11,7 +12,7 @@ namespace Uchuumaru.Modules
     [Name("Filter")]
     [Group("filter")]
     [Summary("Why doesn't alien life exist?")]
-    [RequireUserPermission(ChannelPermission.ManageMessages)]
+    [RequireModeratorOrDeveloper]
     public class FilterModule : ModuleBase<SocketCommandContext>
     {
         private readonly IFilterService _filter;
