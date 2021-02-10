@@ -101,8 +101,8 @@ namespace Uchuumaru.Services.Messages
             }
 
             return builder
-                .AddField("Before", Format.Sanitize(c1))
-                .AddField("After", Format.Sanitize(c2));
+                .AddField("Before", c1)
+                .AddField("After", c2);
         }
 
         public static EmbedBuilder AddPinned(this EmbedBuilder builder, bool before, bool after)
