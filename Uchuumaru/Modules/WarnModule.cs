@@ -23,8 +23,24 @@ namespace Uchuumaru.Modules
         [Summary("Warns a user.")]
         public async Task Warn(IGuildUser user, [Remainder] string reason = null)
         {
-            await _warn.CreateWarn(Context.Guild.Id, user.Id, Context.User.Id, reason);
+            await _warn.Create(Context.Guild.Id, user.Id, Context.User.Id, reason);
             await ReplyAsync($"Warned {user}.");
+        }
+
+        [Command("rescind")]
+        [Summary("Rescinds a warning.")]
+        public async Task Rescind(int id)
+        {
+            await _warn.Rescind(id, Context.Guild.Id);
+            await ReplyAsync($"Rescinded warning \"{id}\"."); 
+        }
+        
+        [Command("delete")]
+        [Summary("Rescinds a warning.")]
+        public async Task Delete(int id)
+        {
+            await _warn.Delete(id, Context.Guild.Id);
+            await ReplyAsync($"Deleted warning \"{id}\"."); 
         }
     }
 }

@@ -45,7 +45,6 @@ namespace Uchuumaru.Services
             _client.UserLeft += UserLeft;
             _client.GuildMemberUpdated += GuildMemberUpdated;
             _commands.CommandExecuted += CommandExecuted;
-            
             _client.Log += Log;
             _client.Ready += Ready;
             return Task.CompletedTask;

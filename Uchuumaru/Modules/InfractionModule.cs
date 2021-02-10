@@ -82,9 +82,13 @@ namespace Uchuumaru.Modules
 
                     foreach (var infraction in infractionGroup)
                     {
+                        var reason = infraction.Type is InfractionType.Warning && infraction.Completed
+                            ? Format.Strikethrough(infraction.Reason)
+                            : infraction.Reason;
+                        
                         curentPage
                             .WithColor(Constants.DefaultColour)
-                            .AddField($"[{infraction.Id}] {infraction.Type}", infraction.Reason ?? "No reason provided.");
+                            .AddField($"{infraction.Id}. {infraction.Type}", reason ?? "No reason provided.");
                     }
                 
                     pages.Add(curentPage);

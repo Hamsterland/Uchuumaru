@@ -30,4 +30,18 @@ namespace Uchuumaru.Services.Infractions
         public InfractionMessageNotFoundException(ulong messageId) : base($"No infraction message with ID \"{messageId}\" could be found.")
         { }
     }
+
+    /// <summary>
+    /// Represents an <see cref="Exception"/> thrown when an Infraction with the specified
+    /// ID could not be found.
+    /// </summary>
+    public class InfractionNotFoundException : Exception
+    {
+        /// <summary>
+        /// Constructs a new <see cref="InfractionNotFoundException"/>.
+        /// </summary>
+        /// <param name="id">The ID of the Infraction.</param>
+        public InfractionNotFoundException(int id) : base($"No infraction with ID \"{id}\" could be found.")
+        { }
+    }
 }
