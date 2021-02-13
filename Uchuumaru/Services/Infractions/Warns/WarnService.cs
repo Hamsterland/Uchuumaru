@@ -29,9 +29,19 @@ namespace Uchuumaru.Services.Infractions.Warns
             ulong guildId,
             ulong subjectId,
             ulong moderatorId,
+            bool log,
             string reason = null)
         {
-            var id = await _infraction.CreateInfraction(InfractionType.Warning, guildId, subjectId, moderatorId, TimeSpan.Zero, reason);
+            var id = await _infraction.CreateInfraction(
+                InfractionType.Warning, 
+                guildId, subjectId, 
+                moderatorId, 
+                TimeSpan.Zero,
+                reason);
+            
+            if (!log)
+                return;
+            
             var infractionChannelId = await _infraction.GetInfractionChannelId(guildId);
             
             if (infractionChannelId == 0)

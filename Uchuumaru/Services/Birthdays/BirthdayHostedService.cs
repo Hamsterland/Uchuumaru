@@ -37,9 +37,9 @@ namespace Uchuumaru.Services.Birthdays
 
         private Timer _timer;
         private const string _title = "Tanjoubi Omedetou!";
-        private readonly string _message = "It is {0}'s Birthday!";
+        private const string _message = "It is {0}'s Birthday!";
         private const string _url = "https://image.myanimelist.net/ui/BQM6jEZ-UJLgGUuvrNkYUCG8p-X1WhZLiR4h-oxkqQd0AETF23XSKPPjpo3qG3m8UUKiCNQTx80pWGq9ym3lQw";
-        
+
         /// <summary>
         /// Initializes the private <see cref="_timer"/> that executes immediately and subsequently
         /// every 24 hours. 
@@ -51,12 +51,12 @@ namespace Uchuumaru.Services.Birthdays
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new Timer(
-                async _ => await ExecuteBirthday(), 
-                null, 
-                TimeSpan.Zero, 
+                async _ => await ExecuteBirthday(),
+                null,
+                TimeSpan.Zero,
                 TimeSpan.FromHours(24)
             );
-            
+
             return Task.CompletedTask;
         }
 
@@ -75,18 +75,19 @@ namespace Uchuumaru.Services.Birthdays
 
             // Each List<User> share the same Guild.
             var birthdayGroups = users
-                .Where(x => x.Birthday.Day.Equals(DateTime.UtcNow.Day) && x.Birthday.Month.Equals(DateTime.UtcNow.Month))
+                .Where(x => x.Birthday.Day.Equals(DateTime.UtcNow.Day) 
+                            && x.Birthday.Month.Equals(DateTime.UtcNow.Month))
                 .GroupBy(user => user.Guild.Id)
                 .Select(group => group.ToList())
                 .ToList();
-            
+
             foreach (var group in birthdayGroups)
             {
                 var guild = await _context
                     .Guilds
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.GuildId == group[0].Guild.GuildId);
-                
+
                 foreach (var user in group)
                 {
                     var socketGuild = _client.GetGuild(user.Guild.GuildId);
@@ -94,17 +95,13 @@ namespace Uchuumaru.Services.Birthdays
                     var birthdayId = guild.BirthdayChannelId;
 
                     if (birthdayId == 0)
-                    {
                         return;
-                    }
 
                     var birthdayChannel = socketGuild.GetChannel(birthdayId) as ITextChannel;
 
                     if (birthdayChannel is null)
-                    {
                         return;
-                    }
-                    
+
                     var embed = new EmbedBuilder()
                         .WithTitle(_title)
                         .WithDescription(string.Format(_message, socketUser))
@@ -116,7 +113,7 @@ namespace Uchuumaru.Services.Birthdays
                 }
             }
         }
-        
+
         /// <summary>
         /// Disposes the private <see cref="_timer"/>.
         /// </summary>

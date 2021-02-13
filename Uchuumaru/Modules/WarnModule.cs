@@ -23,11 +23,20 @@ namespace Uchuumaru.Modules
         [Summary("Warns a user.")]
         public async Task Warn(IGuildUser user, [Remainder] string reason = null)
         {
-            await _warn.Create(Context.Guild.Id, user.Id, Context.User.Id, reason);
+            var log = true;
+            var myAnimeListOnly = new MyAnimeListOnly();
+            var preconditionResult = await myAnimeListOnly.CheckPermissionsAsync(Context, null, null);
+
+            // We don't want to log warns in MyAnimeList because Gil said so. 
+            if (preconditionResult.IsSuccess)
+                log = false;
+
+            await _warn.Create(Context.Guild.Id, user.Id, Context.User.Id, log, reason);
             await ReplyAsync($"Warned {user}.");
         }
 
         [Command("rescind")]
+        [Alias("revoke")]
         [Summary("Rescinds a warning.")]
         public async Task Rescind(int id)
         {

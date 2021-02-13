@@ -51,7 +51,7 @@ namespace Uchuumaru.Modules
                 await ReplyAsync($"{user} is already banned.");
                 return; 
             }
-
+            
             await Context.Guild.AddBanAsync(user, reason: reason);
             await ReplyBanMessage(user);
         }

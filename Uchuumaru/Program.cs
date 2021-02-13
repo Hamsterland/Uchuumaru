@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Hangfire;
 using Interactivity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -58,7 +57,7 @@ namespace Uchuumaru
                     ThrowOnError = true
                 });
 
-                var interactivity = new InteractivityService(client);
+                var interactivity = new InteractivityService(client, TimeSpan.FromSeconds(60));
 
                 collection
                     .AddMediatR(typeof(Program).Assembly)
@@ -82,9 +81,7 @@ namespace Uchuumaru
                     .AddReports()
                     .AddHostedService<StartupHostedService>()
                     .AddHostedService<DiscordHostedService>()
-                    .AddHostedService<BirthdayHostedService>()
-                    .AddSingleton(new InteractivityService(client, TimeSpan.FromSeconds(30)));
-            })
-            .RunConsoleAsync();
+                    .AddHostedService<BirthdayHostedService>();
+            }).RunConsoleAsync();
     }
 }
