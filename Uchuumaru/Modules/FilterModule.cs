@@ -1,8 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using Uchuumaru.Data.Models;
 using Uchuumaru.Preconditions;
 using Uchuumaru.Services.Filters;
@@ -61,9 +64,9 @@ namespace Uchuumaru.Modules
         public async Task List()
         {
             var status = await _filter.GetFilterStatus(Context.Guild.Id);
-            var JSON = JsonSerializer.Serialize(status.Expressions);
-            var path = Directory.GetCurrentDirectory() + "/filtered-expressions.json";
-            
+            var JSON = JsonSerializer.Serialize(status.Expressions, new JsonSerializerOptions { WriteIndented = true });
+            var path = $"{Directory.GetCurrentDirectory()}/filters-{DateTime.UtcNow:MM/dd/yyyy}"; 
+
             await using (var sw = File.CreateText(path))
             {
                 await sw.WriteAsync(JSON);
