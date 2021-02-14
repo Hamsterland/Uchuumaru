@@ -52,6 +52,7 @@ namespace Uchuumaru.Services.Messages
             {
                 return;
             }
+            
             var embed = new EmbedBuilder()
                 .WithTitle("Message Deleted")
                 .AddChannel(sourceChannel)
@@ -110,7 +111,7 @@ namespace Uchuumaru.Services.Messages
 
         public static EmbedBuilder AddChannel(this EmbedBuilder builder, IChannel channel)
         {
-            return builder.AddField("Channel", $"{channel.Name} ({channel.Id})");
+            return builder.AddField("Channel", $"<#{channel.Id}> ({channel.Id})");
         }
 
         public static EmbedBuilder AddReactions(this EmbedBuilder builder,

@@ -135,7 +135,7 @@ namespace Uchuumaru.Services.Filters
                 .WithTitle("Filter Violation")
                 .WithColor(Constants.DefaultColour)
                 .AddField("Author", $"{message.Author} ({message.Author.Id})")
-                .AddField("Channel", $"{message.Channel.Name} ({message.Channel.Id})")
+                .AddField("Channel", $"<#{message.Channel.Id}> ({message.Channel.Id})")
                 .WithDescription(Format.Sanitize(message.Content))
                 .Build();
 
