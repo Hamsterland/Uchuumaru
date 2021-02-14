@@ -33,7 +33,7 @@ namespace Uchuumaru.Services.Infractions.Bans
 
             var ban = guild
                 .Infractions
-                .Where(x => x.Type == InfractionType.Ban)
+                .Where(x => x.Type == InfractionType.BAN)
                 .Where(x => x.Completed == false)
                 .FirstOrDefault(x => x.SubjectId == subjectId);
 

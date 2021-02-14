@@ -41,7 +41,7 @@ namespace Uchuumaru.Services.Infractions.Bans
             var guild = notification.Guild;
 
             var id = await _infraction.CreateInfraction(
-                InfractionType.Ban,
+                InfractionType.BAN,
                 guild.Id,
                 user.Id,
                 0,

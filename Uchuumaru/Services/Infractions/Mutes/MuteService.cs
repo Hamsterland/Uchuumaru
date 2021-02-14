@@ -57,7 +57,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
             TimeSpan duration, 
             string reason = null)
         {
-            var id = await _infraction.CreateInfraction(InfractionType.Mute, guildId, subjectId, moderatorId, duration, reason);
+            var id = await _infraction.CreateInfraction(InfractionType.MUTE, guildId, subjectId, moderatorId, duration, reason);
             
             var timer = new Timer(async _ => await MuteCallback(guildId, _client.CurrentUser.Id, id),
                 null,
@@ -123,7 +123,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
 
             var mute = guild
                 .Infractions
-                .Where(x => x.Type == InfractionType.Mute)
+                .Where(x => x.Type == InfractionType.MUTE)
                 .Where(x => x.Completed == false)
                 .FirstOrDefault(x => x.SubjectId == userId);
 
@@ -143,7 +143,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
 
             var mute = guild
                 .Infractions
-                .Where(x => x.Type is InfractionType.Mute)
+                .Where(x => x.Type is InfractionType.MUTE)
                 .FirstOrDefault(x => x.Id == id);
             
             _mutes.TryRemove(mute.Id, out var timer);
@@ -164,7 +164,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
             {
                 var mutes = guild
                     .Infractions
-                    .Where(x => x.Type == InfractionType.Mute)
+                    .Where(x => x.Type == InfractionType.MUTE)
                     .Where(x => !x.Completed)
                     .ToList();
                 
@@ -197,7 +197,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
             // Find the mute.
             var mute = guild
                 .Infractions
-                .Where(x => x.Type is InfractionType.Mute)
+                .Where(x => x.Type is InfractionType.MUTE)
                 .FirstOrDefault(x => x.Id == id);
 
             // Complete the mute.

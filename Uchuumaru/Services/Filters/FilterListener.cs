@@ -158,7 +158,7 @@ namespace Uchuumaru.Services.Filters
         private async Task CreateFilterInfraction(ulong subjectId, ulong moderatorId, ulong guildId)
         {
             await _infraction.CreateInfraction(
-                InfractionType.Filter,
+                InfractionType.FILTER,
                 guildId,
                 subjectId,
                 moderatorId,

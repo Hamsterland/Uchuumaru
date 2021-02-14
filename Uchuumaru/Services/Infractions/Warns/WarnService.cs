@@ -33,7 +33,7 @@ namespace Uchuumaru.Services.Infractions.Warns
             string reason = null)
         {
             var id = await _infraction.CreateInfraction(
-                InfractionType.Warning, 
+                InfractionType.WARNING, 
                 guildId, subjectId, 
                 moderatorId, 
                 TimeSpan.Zero,
