@@ -83,11 +83,11 @@ namespace Uchuumaru.Data.Models
     /// </summary>
     public enum InfractionType
     {
-        Ban,
-        Mute,
-        Kick,
-        Warning,
-        Filter
+        BAN,
+        MUTE,
+        KICK,
+        WARNING,
+        FILTER
     }
 
     public class InfractionSummary

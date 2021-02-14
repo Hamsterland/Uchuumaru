@@ -82,7 +82,7 @@ namespace Uchuumaru.Modules
 
                     foreach (var infraction in infractionGroup)
                     {
-                        var reason = infraction.Type is InfractionType.Warning && infraction.Completed
+                        var reason = infraction.Type is InfractionType.WARNING && infraction.Completed
                             ? Format.Strikethrough(infraction.Reason)
                             : infraction.Reason;
                         
