@@ -33,8 +33,7 @@ namespace Uchuumaru.Services.Filters
         /// The infraction service.
         /// </summary>
         private readonly IInfractionService _infraction;
-
-        private readonly ILogger _logger;
+        
 
         /// <summary>
         /// Constructs a new <see cref="FilterListener"/> with the given
@@ -45,7 +44,6 @@ namespace Uchuumaru.Services.Filters
             _filter = filter;
             _client = client;
             _infraction = infraction;
-            _logger = logger;
         }
 
         /// <summary>
@@ -85,30 +83,6 @@ namespace Uchuumaru.Services.Filters
             var regexes = expressions
                 .Select(expression => new Regex(expression))
                 .ToList();
-
-            // Test code in case Regexes break again. 
-            //
-            // var content = message.Content;
-            // var anyMatches = regexes.Any(regex => regex.IsMatch(content));
-            // _logger.Fatal("{A}", $"Any matches: {anyMatches}");
-            //
-            // foreach (var regex in regexes)
-            // {
-            //     var matches = regex.Matches(content);
-            //
-            //     if (matches.Count == 0)
-            //     {
-            //         continue;
-            //     }
-            //     
-            //     _logger.Fatal("Regex: {A}:", regex.ToString());
-            
-            //     foreach (Match match in matches)
-            //     {
-            //         _logger.Fatal("Match: {A}", match.Value);
-            //     }
-            // }
-            
 
             if (regexes.Any(regex => regex.IsMatch(message.Content)))
             {
