@@ -6,6 +6,7 @@ using Discord;
 using MediatR;
 using Uchuumaru.Data;
 using Uchuumaru.Notifications;
+using Uchuumaru.Utilities;
 
 namespace Uchuumaru.Services.Messages
 {
@@ -50,12 +51,12 @@ namespace Uchuumaru.Services.Messages
             
             var flags = 0;
             var author = messageAfter.Author;
-                    
+
             var embed = new EmbedBuilder()
                 .WithTitle("Message Updated")
                 .WithColor(Constants.DefaultColour)
                 .AddField("Channel", $"<#{sourceChannel.Id}> ({sourceChannel.Id}) [Link]({messageAfter.GetJumpUrl()})")
-                .AddMessageAuthor(author);
+                .AddField("Author", author.Represent());
             
             var beforeContent = messageBefore.Value.Content;
             var afterContent = messageAfter.Content;
