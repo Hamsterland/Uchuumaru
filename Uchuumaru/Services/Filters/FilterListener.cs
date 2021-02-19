@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Serilog;
 using Uchuumaru.Data.Models;
 using Uchuumaru.Notifications.Message;
 using Uchuumaru.Services.Infractions;
+using Uchuumaru.Utilities;
 
 namespace Uchuumaru.Services.Filters
 {
@@ -62,21 +64,15 @@ namespace Uchuumaru.Services.Filters
             var guild = (message.Channel as IGuildChannel).Guild;
 
             if (author.Id == _client.CurrentUser.Id)
-            {
                 return;
-            }
             
             if (author.GuildPermissions.Has(GuildPermission.ManageMessages))
-            {
-                return; 
-            }
+                return;
 
             var status = await _filter.GetFilterStatus(guild.Id);
 
             if (!status.Enabled)
-            {
-                return; 
-            }
+                return;
             
             var expressions = status.Expressions;
 
@@ -86,49 +82,38 @@ namespace Uchuumaru.Services.Filters
 
             if (regexes.Any(regex => regex.IsMatch(message.Content)))
             {
+                var matches = regexes
+                    .Where(regex => regex.IsMatch(message.Content))
+                    .Select(x => x.Matches(message.Content))
+                    .ToArray();
+                
                 await message.DeleteAsync();
-                await LogViolation(status, message, guild);
+                await LogViolation(status, message, guild, matches);
                 await CreateFilterInfraction(author.Id, _client.CurrentUser.Id, guild.Id);
             }
         }
-
-        /// <summary>
-        /// Logs a violation of a filter to the filter log. 
-        /// </summary>
-        /// <param name="status">The filter status.</param>
-        /// <param name="message">The filtered message.</param>
-        /// <param name="guild">The guild.</param>
-        /// <returns>
-        /// A <see cref="Task"/> that returns upon completion.
-        /// </returns>
-        private static async Task LogViolation(FilterStatus status, SocketMessage message, IGuild guild)
+        
+        // ReSharper disable once ParameterTypeCanBeEnumerable.Local
+        private static async Task LogViolation(FilterStatus status, SocketMessage message, IGuild guild, MatchCollection[] matchCollections)
         {
-            var filterChannel = await guild.GetChannelAsync(status.FilterChannelId) as ITextChannel;
+            if (await guild.GetChannelAsync(status.FilterChannelId) is not ITextChannel filterChannel)
+                return;
 
+            var sb = new StringBuilder();
+            foreach (var collection in matchCollections)
+                sb.AppendJoin(", ", collection.Select(x => x.Value));
+            
             var embed = new EmbedBuilder()
                 .WithTitle("Filter Violation")
                 .WithColor(Constants.DefaultColour)
-                .AddField("Author", $"{message.Author} ({message.Author.Id})")
-                .AddField("Channel", $"<#{message.Channel.Id}> ({message.Channel.Id})")
-                .WithDescription(Format.Sanitize(message.Content))
+                .AddField("Author", message.Author.Represent())
+                .AddField("Channel", message.Channel.Represent())
+                .AddField("Violations", sb)
                 .Build();
 
             await filterChannel?.SendMessageAsync(embed: embed);
         }
-
-        /// <summary>
-        /// Creates a filter violation infraction.
-        /// </summary>
-        /// <remarks>
-        /// The <paramref name="moderatorId"/> in this case is always the Id
-        /// of the current client user.
-        /// </remarks>
-        /// <param name="subjectId">The Id of the user who violated the filter.</param>
-        /// <param name="moderatorId">The moderator overseeing the infraction.</param>
-        /// <param name="guildId">The guild the violation occured in.</param>
-        /// <returns>
-        /// A <see cref="Task"/> that returns upon completion. 
-        /// </returns>
+        
         private async Task CreateFilterInfraction(ulong subjectId, ulong moderatorId, ulong guildId)
         {
             await _infraction.CreateInfraction(
