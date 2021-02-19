@@ -16,13 +16,11 @@ namespace Uchuumaru.Modules
         {
             var messages = await Context.Channel.GetMessagesAsync(size).FlattenAsync();
             await (Context.Channel as ITextChannel).DeleteMessagesAsync(messages);
-            await ReplyAsync($"Deleted {size} messages.");
         }
 
         [Command("lock")]
         [Summary("Locks a channel.")]
         [ReadyForUse(false)]
-        // [RequireExecutionContext(ExecutionContext.DEVELOPMENT)]
         public async Task Lock()
         {
             var everyone = Context.Guild.EveryoneRole;
@@ -33,7 +31,6 @@ namespace Uchuumaru.Modules
         [Command("unlock")]
         [Summary("Unlocks a channel.")]
         [ReadyForUse(false)]
-        // [RequireExecutionContext(ExecutionContext.DEVELOPMENT)]
         public async Task Unlock()
         {
             var everyone = Context.Guild.EveryoneRole;
