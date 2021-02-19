@@ -8,7 +8,7 @@ namespace Uchuumaru.Notifications
     /// An <see cref="INotification"/> that represents information from the
     /// MessageUpdated event.
     /// </summary>
-    public class MessageUpdatedNotification : INotification
+    public class MessageUpdatedNotification : INotification, IDeconstructable<(Cacheable<IMessage, ulong>, SocketMessage, ISocketMessageChannel)>
     {
         /// <summary>
         /// The message before update.
@@ -36,6 +36,11 @@ namespace Uchuumaru.Notifications
             Before = before;
             After = after;
             Channel = channel;
+        }
+
+        public (Cacheable<IMessage, ulong>, SocketMessage, ISocketMessageChannel) Deconstruct()
+        {
+            return (Before, After, Channel);
         }
     }
 }
