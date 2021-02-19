@@ -1,10 +1,13 @@
 ﻿using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Uchuumaru.Data;
+using Uchuumaru.Data.Models;
+using Uchuumaru.Exceptions;
 using Uchuumaru.Notifications;
 using Uchuumaru.Utilities;
 
@@ -13,102 +16,75 @@ namespace Uchuumaru.Services.Messages
     public class MessageUpdatedListener : INotificationHandler<MessageUpdatedNotification>
     {
         private readonly UchuumaruContext _uchuumaruContext;
+        private readonly DiscordSocketClient _client;
 
-        public MessageUpdatedListener(UchuumaruContext uchuumaruContext)
+        public MessageUpdatedListener(
+            UchuumaruContext uchuumaruContext,
+            DiscordSocketClient client)
         {
             _uchuumaruContext = uchuumaruContext;
+            _client = client;
         }
 
         public async Task Handle(MessageUpdatedNotification notification, CancellationToken cancellationToken)
         {
-            var messageBefore = notification.Before;
-            var messageAfter = notification.After;
-            var sourceChannel = notification.Channel;
-            
-            var sourceGuild = (sourceChannel as IGuildChannel).Guild;
-            var sourceGuildId = sourceGuild.Id;
+            var (before, after channel) = notification.Deconstruct();
+
+            if (!before.HasValue)
+                return;
 
             var guild = await _uchuumaruContext
                 .Guilds
-                .FirstOrDefaultAsync(x => x.GuildId == sourceGuildId, cancellationToken);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.GuildId == (channel as IGuildChannel).GuildId, cancellationToken);
 
-            var messageLogChannelId = guild.MessageChannelId; 
+            if (guild is null)
+                throw new EntityNotFoundException<Guild>();
 
-            if (messageLogChannelId == 0)
-            {
+            if (guild.MessageChannelId == 0)
                 return;
-            }
 
-            if (!messageBefore.HasValue)
-            {
+            if (_client.GetChannel(guild.MessageChannelId) is not IMessageChannel messageChannel)
                 return;
-            }
 
-            if (messageBefore.Value.Author.IsBot)
-            {
+            var beforeValue = before.Value;
+
+            if (beforeValue.Author.IsBot)
                 return;
-            }
-            
-            var flags = 0;
-            var author = messageAfter.Author;
+
+            if (beforeValue.Content == after.Content && beforeValue.IsPinned == after.IsPinned)
+                return;
 
             var embed = new EmbedBuilder()
                 .WithTitle("Message Updated")
                 .WithColor(Constants.DefaultColour)
-                .AddField("Channel", $"<#{sourceChannel.Id}> ({sourceChannel.Id}) [Link]({messageAfter.GetJumpUrl()})")
-                .AddField("Author", author.Represent());
-            
-            var beforeContent = messageBefore.Value.Content;
-            var afterContent = messageAfter.Content;
-                    
-            if (beforeContent != afterContent)
+                .AddField("Author", after.Author.Represent())
+                .AddField("Channel", channel.Represent());
+
+            if (beforeValue.Content != after.Content)
             {
-                embed.AddContent(beforeContent, afterContent);
-                flags++; 
+                const int maxLetters = 1021;
+                var ellipses = new[] {',', ',', ','};
+
+                var beforeLetters = beforeValue.Content.Take(maxLetters).ToList();
+                var afterLetters = after.Content.Take(maxLetters).ToList();
+
+                beforeLetters.AddRange(ellipses);
+                afterLetters.AddRange(ellipses);
+
+                var beforeContent = new string(beforeLetters.ToArray());
+                var afterContent = new string(afterLetters.ToArray());
+
+                embed
+                    .AddField("Before", beforeContent)
+                    .AddField("After", afterContent);
             }
 
-            var beforePinned = messageBefore.Value.IsPinned;
-            var afterPinned = messageAfter.IsPinned;
+            if (beforeValue.IsPinned != after.IsPinned)
+                embed.AddField("Pinned", $"{beforeValue.IsPinned} to {after.IsPinned}");
 
-            if (beforePinned != afterPinned)
-            {
-                embed.AddPinned(beforePinned, afterPinned);
-                flags++;
-            }
+            await messageChannel.SendMessageAsync(embed: embed.Build());
 
-            if (flags > 0)
-            {
-                var messageLogChannel = await sourceGuild.GetChannelAsync(messageLogChannelId) as IMessageChannel;
-                await messageLogChannel.SendMessageAsync(embed: embed.Build());
-            }
-        }
-    }
-
-    public static class MessageUpdatedExtensions
-    {
-        public static EmbedBuilder AddContent(this EmbedBuilder builder, string before, string after)
-        {
-            var c1 = before;
-            var c2 = after;
-
-            if (c1.Length > 1024)
-            {
-                c1 = new string($"{before.Take(1017).ToArray()}...");
-            }
-
-            if (c2.Length > 1024)
-            {
-                c2 = new string($"{after.Take(1017).ToArray()}...");
-            }
-
-            return builder
-                .AddField("Before", c1)
-                .AddField("After", c2);
-        }
-
-        public static EmbedBuilder AddPinned(this EmbedBuilder builder, bool before, bool after)
-        {
-            return builder.AddField("Pinned", $"{before} to {after}");
         }
     }
 }
