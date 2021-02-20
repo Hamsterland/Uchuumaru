@@ -77,7 +77,7 @@ namespace Uchuumaru.Services.Filters
             var expressions = status.Expressions;
 
             var regexes = expressions
-                .Select(expression => new Regex(expression))
+                .Select(expression => new Regex(expression, RegexOptions.IgnoreCase))
                 .ToList();
 
             if (regexes.Any(regex => regex.IsMatch(message.Content)))
