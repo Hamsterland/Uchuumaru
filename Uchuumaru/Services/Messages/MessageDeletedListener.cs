@@ -60,7 +60,7 @@ namespace Uchuumaru.Services.Messages
                 .AddField("Channel", channel.Represent());
 
             if (!string.IsNullOrEmpty(value.Content))
-                embed.AddField("Content", value.Content);
+                embed.WithDescription(value.Content);
             
             if (value.IsPinned)
                 embed.AddField("Pinned", true);
