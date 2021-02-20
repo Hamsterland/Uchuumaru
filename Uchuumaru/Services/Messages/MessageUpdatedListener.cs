@@ -29,7 +29,7 @@ namespace Uchuumaru.Services.Messages
 
         public async Task Handle(MessageUpdatedNotification notification, CancellationToken cancellationToken)
         {
-            var (before, after channel) = notification.Deconstruct();
+            var (before, after, channel) = notification.Deconstruct();
 
             if (!before.HasValue)
                 return;
