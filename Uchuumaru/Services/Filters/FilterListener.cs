@@ -88,15 +88,15 @@ namespace Uchuumaru.Services.Filters
                     .ToArray();
                 
                 await message.DeleteAsync();
-                await LogViolation(status, message, guild, matches);
+                await LogViolation(status, message, matches, message.Content);
                 await CreateFilterInfraction(author.Id, _client.CurrentUser.Id, guild.Id);
             }
         }
         
         // ReSharper disable once ParameterTypeCanBeEnumerable.Local
-        private static async Task LogViolation(FilterStatus status, SocketMessage message, IGuild guild, MatchCollection[] matchCollections)
+        private async Task LogViolation(FilterStatus status, SocketMessage message, MatchCollection[] matchCollections, string content)
         {
-            if (await guild.GetChannelAsync(status.FilterChannelId) is not ITextChannel filterChannel)
+            if (_client.GetChannel(status.FilterChannelId) is not ITextChannel filterChannel)
                 return;
 
             var sb = new StringBuilder();
@@ -106,12 +106,13 @@ namespace Uchuumaru.Services.Filters
             var embed = new EmbedBuilder()
                 .WithTitle("Filter Violation")
                 .WithColor(Constants.DefaultColour)
+                .WithDescription(content)
                 .AddField("Author", message.Author.Represent())
                 .AddField("Channel", message.Channel.Represent())
                 .AddField("Violations", sb)
                 .Build();
 
-            await filterChannel?.SendMessageAsync(embed: embed);
+            await filterChannel.SendMessageAsync(embed: embed);
         }
         
         private async Task CreateFilterInfraction(ulong subjectId, ulong moderatorId, ulong guildId)
