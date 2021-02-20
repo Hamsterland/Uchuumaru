@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using Humanizer;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Uchuumaru.Data;
@@ -63,18 +64,30 @@ namespace Uchuumaru.Services.Messages
 
             if (beforeValue.Content != after.Content)
             {
-                const int maxLetters = 1021;
-                var ellipses = new[] {',', ',', ','};
+                string beforeContent = null;
+                string afterContent = null;
 
-                var beforeLetters = beforeValue.Content.Take(maxLetters).ToList();
-                var afterLetters = after.Content.Take(maxLetters).ToList();
+                const int fieldLimit = 1024; 
+                const int characterLimit = 1021;
 
-                beforeLetters.AddRange(ellipses);
-                afterLetters.AddRange(ellipses);
+                // If either of the edited message versions are larger than the field limit, truncate them.
+                // Truncate() appends "..." to the end of the string.
+                if (beforeValue.Content.Length > fieldLimit || after.Content.Length > fieldLimit)
+                {
+                    if (beforeValue.Content.Length > fieldLimit)
+                        beforeContent = beforeValue.Content.Truncate(characterLimit);
 
-                var beforeContent = new string(beforeLetters.ToArray());
-                var afterContent = new string(afterLetters.ToArray());
-
+                    if (after.Content.Length > fieldLimit)
+                        afterContent = after.Content.Truncate(characterLimit);
+                    
+                    embed.WithFooter("The message is too long to display and was truncated.");
+                }
+                else
+                {
+                    beforeContent = beforeValue.Content;
+                    afterContent = after.Content;
+                }
+                
                 embed
                     .AddField("Before", beforeContent)
                     .AddField("After", afterContent);
@@ -84,7 +97,6 @@ namespace Uchuumaru.Services.Messages
                 embed.AddField("Pinned", $"{beforeValue.IsPinned} to {after.IsPinned}");
 
             await messageChannel.SendMessageAsync(embed: embed.Build());
-
         }
     }
 }
