@@ -37,9 +37,9 @@ namespace Uchuumaru.Preconditions
             
             var ids = developers.Select(ulong.Parse);
             var author = context.Message.Author;
-            
+
             return Task.FromResult(ids.Any(x => x == author.Id) 
-                ? PreconditionResult.FromSuccess() 
+                ? PreconditionResult.FromSuccess()
                 : PreconditionResult.FromError($"{author} {author.Id} is not a developer."));
         }
     }
