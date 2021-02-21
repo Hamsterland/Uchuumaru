@@ -46,7 +46,7 @@ namespace Uchuumaru.Services
             _client.GuildMemberUpdated += GuildMemberUpdated;
             _commands.CommandExecuted += CommandExecuted;
             _client.Log += Log;
-            _client.Ready += Ready;
+            // _client.Ready += Ready;
             return Task.CompletedTask;
         }
 
@@ -72,39 +72,40 @@ namespace Uchuumaru.Services
             await _mediator.Publish(new LogMessageNotification(log));
         }
         
-        private Task Ready()
-        {
-            _logger.Fatal("Ready Hit");
-            _client.Ready -= Ready; 
-            
-            Task.Run(async () =>
-            {
-                _logger.Fatal("Task.Run() Hit");
-                var guild = _client.GetGuild(301123999000166400);
-    
-                _logger.Fatal($"Guild is null?: {guild is null}");
-                
-                var mods = guild
-                    .Users
-                    .Where(x => x.Roles.Any(role => role.Id == 301125242749714442))
-                    .ToList();
-    
-                _logger.Fatal($"Mods found.");
-                _logger.Fatal($"Mods: {mods.Count}");
-                
-                while (true)
-                {
-                    foreach (var mod in mods)
-                    {
-                        await _client.SetGameAsync($"with {mod.Nickname ?? mod.Username}");
-                        _logger.Fatal($"Set game");
-                        await Task.Delay(900000);
-                        _logger.Fatal($"Task waiting");
-                    }
-                }
-            });
-            
-            return Task.CompletedTask;
-        }
+        // TODO: Find out why this doesn't work on Linux
+        // private Task Ready()
+        // {
+        //     _logger.Fatal("Ready Hit");
+        //     _client.Ready -= Ready; 
+        //     
+        //     Task.Run(async () =>
+        //     {
+        //         _logger.Fatal("Task.Run() Hit");
+        //         var guild = _client.GetGuild(301123999000166400);
+        //
+        //         _logger.Fatal($"Guild is null?: {guild is null}");
+        //         
+        //         var mods = guild
+        //             .Users
+        //             .Where(x => x.Roles.Any(role => role.Id == 301125242749714442))
+        //             .ToList();
+        //
+        //         _logger.Fatal($"Mods found.");
+        //         _logger.Fatal($"Mods: {mods.Count}");
+        //         
+        //         while (true)
+        //         {
+        //             foreach (var mod in mods)
+        //             {
+        //                 await _client.SetGameAsync($"with {mod.Nickname ?? mod.Username}");
+        //                 _logger.Fatal($"Set game");
+        //                 await Task.Delay(900000);
+        //                 _logger.Fatal($"Task waiting");
+        //             }
+        //         }
+        //     });
+        //     
+        //     return Task.CompletedTask;
+        // }
     }
 }
