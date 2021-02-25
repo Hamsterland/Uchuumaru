@@ -140,7 +140,7 @@ namespace Uchuumaru.Services.Infractions.Mutes
                 .FirstOrDefaultAsync();
             
             _ = guild ?? throw new EntityNotFoundException<Guild>();
-
+    
             var mute = guild
                 .Infractions
                 .Where(x => x.Type is InfractionType.MUTE)

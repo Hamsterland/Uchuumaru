@@ -16,7 +16,9 @@ namespace Uchuumaru.Modules
         302310311074070531,     // Site Admin
         301127756467535885,     // Site Staff
         312948066661695488,     // Retired Site Staff
-        674424406600319018)]    // Former Admin
+        674424406600319018,     // Former Admin
+        781950226423349298,     // Rewrite Moderator
+        225940071516209153)]    // Coordinator
     public class BirthdayModule : ModuleBase<SocketCommandContext>
     {
         private readonly IBirthdayService _birthday;

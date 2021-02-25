@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
