@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Uchuumaru.Preconditions;
@@ -14,7 +16,14 @@ namespace Uchuumaru.Modules
         [Summary("Prunes messages from the channel. The default is 100.")]
         public async Task Prune(int size = 100)
         {
-            var messages = await Context.Channel.GetMessagesAsync(size).FlattenAsync();
+            var messages = await Context.Channel
+                .GetMessagesAsync(size)
+                .FlattenAsync();
+
+            messages = messages
+                .Where(x => DateTimeOffset.Now - x.CreatedAt < TimeSpan.FromDays(14))
+                .ToList();
+            
             await (Context.Channel as ITextChannel).DeleteMessagesAsync(messages);
         }
 
