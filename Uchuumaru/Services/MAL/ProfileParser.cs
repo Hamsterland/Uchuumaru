@@ -101,17 +101,13 @@ namespace Uchuumaru.Services.MAL
                 .Children[1]
                 .TextContent;
 
-            switch (gender)
+            return gender switch
             {
-                case "Non-Binary":
-                    return Gender.NONBINARY;
-                case "Female":
-                    return Gender.MALE;
-                case "Male":
-                    return Gender.MALE;
-                default:
-                    return Gender.UNSPECIFIED;
-            }
+                "Non-Binary" => Gender.NONBINARY,
+                "Female" => Gender.FEMALE,
+                "Male" => Gender.MALE,
+                _ => Gender.UNSPECIFIED
+            };
         }
 
         public static string GetBirthday(List<IElement> elements)
