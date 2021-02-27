@@ -104,8 +104,7 @@ namespace Uchuumaru.Services.MAL
             switch (gender)
             {
                 case "Non-Binary":
-                    _ = Enum.TryParse(gender.Remove(gender.IndexOf('-'), 1), out Gender parsedGender);
-                    return parsedGender;
+                    return Gender.NONBINARY;
                 case "Female":
                     return Gender.MALE;
                 case "Make":
