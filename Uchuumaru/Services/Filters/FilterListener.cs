@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -66,11 +67,15 @@ namespace Uchuumaru.Services.Filters
             if (author.Id == _client.CurrentUser.Id)
                 return;
             
-            if (author.GuildPermissions.Has(GuildPermission.ManageMessages))
-                return;
-
             var status = await _filter.GetFilterStatus(guild.Id);
 
+            // Hotfix to make testing the filter possible 
+            if (!message.Content.StartsWith("+filter test"))
+            {
+                if (author.GuildPermissions.Has(GuildPermission.ManageMessages))
+                    return;
+            }
+            
             if (!status.Enabled)
                 return;
             
@@ -87,29 +92,31 @@ namespace Uchuumaru.Services.Filters
                     .Select(x => x.Matches(message.Content))
                     .ToArray();
                 
+                var sb = new StringBuilder();
+                foreach (var collection in matches)
+                    sb.AppendJoin(", ", collection.Select(x => x.Value));
+                var violations = sb.ToString();
+                
                 await message.DeleteAsync();
-                await LogViolation(status, message, matches, message.Content);
+                await LogViolation(status, message, violations);
+                await PrivateMessageUser(message.Author, guild, message.Channel, violations);
                 await CreateFilterInfraction(author.Id, _client.CurrentUser.Id, guild.Id);
             }
         }
         
         // ReSharper disable once ParameterTypeCanBeEnumerable.Local
-        private async Task LogViolation(FilterStatus status, SocketMessage message, MatchCollection[] matchCollections, string content)
+        private async Task LogViolation(FilterStatus status, SocketMessage message, string violations)
         {
             if (_client.GetChannel(status.FilterChannelId) is not ITextChannel filterChannel)
                 return;
-
-            var sb = new StringBuilder();
-            foreach (var collection in matchCollections)
-                sb.AppendJoin(", ", collection.Select(x => x.Value));
             
             var embed = new EmbedBuilder()
                 .WithTitle("Filter Violation")
                 .WithColor(Constants.DefaultColour)
-                .WithDescription(content)
+                .WithDescription(message.Content)
                 .AddField("Author", message.Author.Represent())
                 .AddField("Channel", message.Channel.Represent())
-                .AddField("Violations", sb)
+                .AddField("Violations", violations)
                 .Build();
 
             await filterChannel.SendMessageAsync(embed: embed);
@@ -125,6 +132,17 @@ namespace Uchuumaru.Services.Filters
                 TimeSpan.Zero,
                 "Filter Violation"
             );
+        }
+
+        private static async Task PrivateMessageUser(IUser user, IGuild guild, IChannel channel, string violations)
+        {
+            
+            var message = $"{user.Represent()}, your message in #{channel.Represent()} in the server {guild.Name} " +
+                          $"was deleted because it contained the following disallowed content: {violations}. " +
+                          "Please refrain from sending this content again. " +
+                          "Notify a moderator if you have any further queries or believe this was a mistake.";
+
+            await user?.SendMessageAsync(message);
         }
     }
 }
