@@ -107,7 +107,7 @@ namespace Uchuumaru.Services.MAL
                     return Gender.NONBINARY;
                 case "Female":
                     return Gender.MALE;
-                case "Make":
+                case "Male":
                     return Gender.MALE;
                 default:
                     return Gender.UNSPECIFIED;
