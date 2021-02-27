@@ -19,6 +19,7 @@ using Uchuumaru.Services.Birthdays;
 using Uchuumaru.Services.Guilds;
 using Uchuumaru.Services.Infractions;
 using Uchuumaru.Services.Infractions.Reports;
+using Uchuumaru.Services.MAL;
 using Uchuumaru.Services.Users;
 using Uchuumaru.TypeReaders;
 
@@ -78,6 +79,7 @@ namespace Uchuumaru
                     .AddUsers()
                     .AddBirthdays()
                     .AddReports()
+                    .AddSingleton<ProfileParser>()
                     .AddHostedService<StartupHostedService>()
                     .AddHostedService<DiscordHostedService>()
                     .AddHostedService<BirthdayHostedService>();
