@@ -65,7 +65,7 @@ namespace Uchuumaru.Modules
         {
             var status = await _filter.GetFilterStatus(Context.Guild.Id);
             var JSON = JsonSerializer.Serialize(status.Expressions, new JsonSerializerOptions { WriteIndented = true });
-            var path = $"{Directory.GetCurrentDirectory()}/filters-{DateTime.UtcNow:MM.dd.yyyy}"; 
+            var path = $"{Directory.GetCurrentDirectory()}/filters-{Context.Guild.Id}-{DateTime.UtcNow:MM.dd.yyyy}"; 
 
             await using (var sw = File.CreateText(path))
             {
