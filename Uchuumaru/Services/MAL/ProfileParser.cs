@@ -106,9 +106,12 @@ namespace Uchuumaru.Services.MAL
                 case "Non-Binary":
                     _ = Enum.TryParse(gender.Remove(gender.IndexOf('-'), 1), out Gender parsedGender);
                     return parsedGender;
+                case "Female":
+                    return Gender.MALE;
+                case "Make":
+                    return Gender.MALE;
                 default:
-                    _ = Enum.TryParse(gender, out parsedGender);
-                    return parsedGender;
+                    return Gender.UNSPECIFIED;
             }
         }
 
