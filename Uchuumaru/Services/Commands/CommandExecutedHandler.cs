@@ -37,7 +37,7 @@ namespace Uchuumaru.Services.Commands
         {
             var (command, contex, result) = notification.Deconstruct();
 
-            if (!result.IsSuccess)
+            if (!result.IsSuccess && result is ExecuteResult executeResult)
             {
                 // TEMPORARY LOGGING
                 var me = _client.GetUser(330746772378877954);
@@ -48,9 +48,26 @@ namespace Uchuumaru.Services.Commands
                     .AppendLine()
                     .AppendLine(Format.Bold("COMMAND ERROR"))
                     .AppendLine(result.Error?.ToString())
+                    .AppendLine()
+                    .AppendLine(Format.Bold("EXCEPTION"))
+                    .AppendLine(executeResult.Exception.Message)
+                    .AppendLine(executeResult.Exception.Source)
+                    .AppendLine(executeResult.Exception.HelpLink)
+                    .AppendLine(executeResult.Exception.StackTrace)
                     .ToString();
 
-                await me.SendMessageAsync(message);
+                if (message.Length > 2000)
+                {
+                    // It's fine if we lose a couple characters
+                    var message1 = message.Substring(0, message.Length / 2);
+                    var message2 = message.Substring(message.Length / 2, message.Length - 1);
+                    await me.SendMessageAsync(message1);
+                    await me.SendMessageAsync(message2);
+                }
+                else
+                {
+                    await me.SendMessageAsync(message);
+                }
 
                 switch (result.Error)
                 {
