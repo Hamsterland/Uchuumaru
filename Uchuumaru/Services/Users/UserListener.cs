@@ -45,6 +45,9 @@ namespace Uchuumaru.Services.Users
         /// </returns>
         public async Task Handle(MessageReceivedNotification notification, CancellationToken cancellationToken)
         {
+            if (notification.Message.Channel is IDMChannel)
+                return;
+            
             var author = notification.Message.Author;
             var guildId = (notification.Message.Channel as IGuildChannel).GuildId;
 
@@ -54,9 +57,7 @@ namespace Uchuumaru.Services.Users
                 .FirstOrDefaultAsync(x => x.UserId == author.Id, cancellationToken);
 
             if (user is not null)
-            {
-                return; 
-            }
+                return;
 
             var guild = await _uchuumaruContext
                 .Guilds

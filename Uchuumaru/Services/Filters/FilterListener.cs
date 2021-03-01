@@ -60,6 +60,9 @@ namespace Uchuumaru.Services.Filters
         /// </returns>
         public async Task Handle(MessageReceivedNotification notification, CancellationToken cancellationToken)
         {
+            if (notification.Message.Channel is IDMChannel)
+                return;
+            
             var message = notification.Message;
             var author = message.Author as IGuildUser;
             var guild = (message.Channel as IGuildChannel).Guild;
