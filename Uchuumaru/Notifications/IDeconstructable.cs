@@ -1,6 +1,6 @@
 ﻿namespace Uchuumaru.Notifications
 {
-    public interface IDeconstructable<T>
+    public interface IDeconstructable<out T>
     {
         T Deconstruct();
     }
