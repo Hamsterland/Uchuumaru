@@ -23,6 +23,11 @@ namespace Uchuumaru.Data
         /// The active users who share guilds with the bot.
         /// </summary>
         public DbSet<User> Users { get; set; }
+
+        /// <summary>
+        /// The users and their MAL accounts.
+        /// </summary>
+        public DbSet<MALUser> MALUsers { get; set; }
         
         /// <summary>
         /// Constructs a new <see cref="UchuumaruContext"/>

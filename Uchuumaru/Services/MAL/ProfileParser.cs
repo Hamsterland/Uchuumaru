@@ -5,56 +5,109 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
 namespace Uchuumaru.Services.MAL
 {
-    public class ProfileParser
+    /// <inheritdoc/>
+    public class ProfileParser : IProfileParser
     {
-        private readonly HttpClient _client = new();
-        private readonly HtmlParser _parser = new();
+        private readonly HttpClient _httpClient = new();
+        private readonly HtmlParser _htmlParser = new();
 
-        private readonly Regex ImageUrl = new(@"\b(?:https?://|www\.)\S+\b");
+        private readonly Regex _imageUrl = new("https://cdn.myanimelist.net/images/userimages/(?<userId>[0-9]+).(png|jp(e)?g|gif)");
+        private readonly Regex _usernameComments = new("(?<Username>(.?)+)'s Comments");
 
-        public async Task<Profile> ParseProfile(string username)
+        private const string MALRoot = "https://myanimelist.net/";
+        private const string Profile = "profile/";
+        private const string AnimeList = "animelst/";
+        private const string MangaList = "mangalist/";
+        
+        /// <inheritdoc/>
+        public async Task<Profile> Parse(string username)
         {
             var html = await DownloadHtml(username);
-            var document = await _parser.ParseDocumentAsync(html) as IDocument;
-            var clearfixElements = GetClearfixElements(document).ToList();
+            var document = await _htmlParser.ParseDocumentAsync(html);
+            var elements = GetClearfixElements(document).ToList();
 
+            var imageUrl = GetImageUrl(document);
+            
             return new Profile(username)
             {
-                ProfileUrl = $"https://myanimelist.net/profile/{username}",
-                AnimeListUrl = $"https://myanimelist.net/animelist/{username}",
-                MangaListUrl = $"https://myanimelist.net/mangalist/{username}",
-                ImageUrl = GetImageUrl(document),
-                MalSupporter = IsMalSupporter(document),
-                Score = GetScore(document),
-                LastOnline = GetLastOnline(clearfixElements),
-                Gender = GetGender(clearfixElements),
-                Birthday = GetBirthday(clearfixElements),
-                Location = GetLocation(clearfixElements),
-                DateJoined = GetDateJoined(clearfixElements)
+                ProfileUrl = MALRoot + Profile + username,
+                AnimeListUrl = MALRoot + AnimeList + username,
+                MangaListUrl = MALRoot + MangaList + username,
+                ImageUrl = imageUrl,
+                IsSupporter = GetSupporter(document),
+                MeanScore = GetScore(document),
+                RawLastOnline = GetLastOnline(elements),
+                Gender = GetGender(elements),
+                RawBirthday = GetBirthday(elements),
+                Location = GetLocation(elements),
+                DateJoined = GetDateJoined(elements),
+                ID = GetUserId(imageUrl)
             };
         }
-        
-        public async Task<string> DownloadHtml(string username)
-            => await _client
-                .GetStringAsync($"https://myanimelist.net/profile/{username}");
 
-        public static bool IsElementSpecified(IEnumerable<IElement> elements, string argument)
+        /// <inheritdoc/>
+        public async Task<IHtmlDocument> ParseDocumentAsync(string html) 
+            => await _htmlParser.ParseDocumentAsync(html);
+        
+        /// <inheritdoc/>
+        public async Task<string> DownloadHtml(string username)
+            => await _httpClient
+                .GetStringAsync(MALRoot + Profile + username);
+
+        /// <inheritdoc/>
+        public bool IsElementSpecified(IEnumerable<IElement> elements, string argument)
             => elements.Any(x => x.InnerHtml
                 .Contains(argument));
 
+        /// <inheritdoc/>
+        public async Task<string> GetUsernameFromId(int id)
+        {
+            var url = $"https://myanimelist.net/comments.php?id={id}";
+            var html = await _httpClient.GetStringAsync(url);
+            var document = await _htmlParser.ParseDocumentAsync(html);
+
+            var content = document
+                .GetElementById("contentWrapper")
+                .FirstChild
+                .TextContent;
+
+            return _usernameComments
+                .Matches(content)
+                .FirstOrDefault()
+                .Groups["Username"]
+                .Value;
+        }
+        
+        /// <inheritdoc/>
         public string GetImageUrl(IDocument document)
-            => ImageUrl
+            => _imageUrl
                 .Match(document.Images
                     .FirstOrDefault(x => x.OuterHtml
                         .Contains("https://cdn.myanimelist.net/images/userimages/"))
                     .OuterHtml)
                 .Value;
 
-        public static bool IsMalSupporter(IDocument document)
+        /// <inheritdoc/>
+        public int GetUserId(string imageUrl)
+        {
+            var matches = _imageUrl.Matches(imageUrl);
+            
+            foreach (Match match in matches)
+            {
+                if (int.TryParse(match.Groups["userId"].Value, out var id))
+                    return id;
+            }
+
+            return 0;
+        }
+
+        /// <inheritdoc/>
+        public bool GetSupporter(IDocument document)
             => document
                 .All
                 .First(x => x.ClassName == "link")
@@ -62,7 +115,8 @@ namespace Uchuumaru.Services.MAL
                 .FirstOrDefault()
                 .TextContent == "Supporter";
 
-        public static double GetScore(IDocument document)
+        /// <inheritdoc/>
+        public double GetScore(IDocument document)
         {
             var nodes = document.All.ToArray();
             double score = 0;
@@ -81,18 +135,21 @@ namespace Uchuumaru.Services.MAL
             return score;
         }
 
-        public static IEnumerable<IElement> GetClearfixElements(IDocument document)
+        /// <inheritdoc/>
+        public IEnumerable<IElement> GetClearfixElements(IDocument document)
             => document
                 .All
                 .Where(x => x.ClassName == "clearfix");
 
-        public static string GetLastOnline(IEnumerable<IElement> elements)
+        /// <inheritdoc/>
+        public string GetLastOnline(IEnumerable<IElement> elements)
             => elements
                 .FirstOrDefault()
                 .Children[1]
                 .TextContent;
 
-        public static Gender GetGender(List<IElement> elements)
+        /// <inheritdoc/>
+        public Gender GetGender(List<IElement> elements)
         {
             if (!IsElementSpecified(elements, "Gender"))
                 return Gender.UNSPECIFIED;
@@ -110,19 +167,22 @@ namespace Uchuumaru.Services.MAL
             };
         }
 
-        public static string GetBirthday(List<IElement> elements)
+        /// <inheritdoc/>
+        public string GetBirthday(List<IElement> elements)
         {
             var index = 2;
             if (!IsElementSpecified(elements, "Gender"))
                 index = 1;
 
+            
             return IsElementSpecified(elements, "Birthday")
                 ? elements[index]
                     .Children[1]
                     .TextContent
-                : "No Birthday";
+                : null;
         }
 
+        /// <inheritdoc/>
         public string GetLocation(List<IElement> elements)
         {
             return IsElementSpecified(elements, "Location")
@@ -132,7 +192,8 @@ namespace Uchuumaru.Services.MAL
                 : "No Location";
         }
 
-        public static DateTime GetDateJoined(List<IElement> elements)
+        /// <inheritdoc/>
+        public DateTime GetDateJoined(List<IElement> elements)
             => DateTime.Parse(elements[^2]
                 .Children[1]
                 .TextContent);
