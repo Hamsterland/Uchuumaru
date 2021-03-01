@@ -1,6 +1,9 @@
-﻿using System.Threading;
+﻿using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using MediatR;
 using Serilog;
 using Uchuumaru.Notifications;
@@ -14,19 +17,11 @@ namespace Uchuumaru.Services.Commands
     /// </summary>
     public class CommandExecutedHandler : INotificationHandler<CommandExecutedNotification>
     {
-        /// <summary>
-        /// The application logger.
-        /// </summary>
-        private readonly ILogger _logger;
+        private readonly DiscordSocketClient _client;
 
-        /// <summary>
-        /// Constructs a new <see cref="CommandExecutedHandler"/> with the given injected
-        /// dependencies.
-        /// </summary>
-        /// <param name="logger"></param>
-        public CommandExecutedHandler(ILogger logger)
+        public CommandExecutedHandler(DiscordSocketClient client)
         {
-            _logger = logger;
+            _client = client;
         }
 
         /// <summary>
@@ -44,6 +39,19 @@ namespace Uchuumaru.Services.Commands
 
             if (!result.IsSuccess)
             {
+                // TEMPORARY LOGGING
+                var me = _client.GetUser(330746772378877954);
+
+                var message = new StringBuilder()
+                    .AppendLine(Format.Bold("ERROR REASON"))
+                    .AppendLine(result.ErrorReason)
+                    .AppendLine()
+                    .AppendLine(Format.Bold("COMMAND ERROR"))
+                    .AppendLine(result.Error?.ToString())
+                    .ToString();
+
+                await me.SendMessageAsync(message);
+
                 switch (result.Error)
                 {
                     case CommandError.UnknownCommand:
