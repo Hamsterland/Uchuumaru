@@ -11,6 +11,7 @@ using AngleSharp.Html.Parser;
 namespace Uchuumaru.Services.MAL
 {
     /// <inheritdoc/>
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public class ProfileParser : IProfileParser
     {
         private readonly HttpClient _httpClient = new();

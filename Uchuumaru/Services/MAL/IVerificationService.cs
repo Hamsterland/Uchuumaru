@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Uchuumaru.Services.MAL
 {
     /// <summary>
     /// Describes a service that verifies a user.
     /// </summary>
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public interface IVerificationService
     {
         /// <summary>

@@ -9,6 +9,7 @@ namespace Uchuumaru.Services.MAL
     /// <summary>
     /// Describes a service that scrapes a MAL profile.
     /// </summary>
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public interface IProfileParser
     {
         /// <summary>

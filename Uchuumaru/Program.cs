@@ -22,6 +22,7 @@ using Uchuumaru.Services.Infractions.Reports;
 using Uchuumaru.Services.MAL;
 using Uchuumaru.Services.Users;
 using Uchuumaru.TypeReaders;
+using ProfileParser = Uchuumaru.MyAnimeList.Parsers.ProfileParser;
 
 namespace Uchuumaru
 {
@@ -79,8 +80,9 @@ namespace Uchuumaru
                     .AddUsers()
                     .AddBirthdays()
                     .AddReports()
-                    .AddSingleton<IProfileParser, ProfileParser>()
-                    .AddSingleton<IVerificationService, VerificationService>()
+                    .AddSingleton<ProfileParser>()
+                    // .AddSingleton<IProfileParser, ProfileParser>()
+                    // .AddSingleton<IVerificationService, VerificationService>()
                     .AddHostedService<StartupHostedService>()
                     .AddHostedService<DiscordHostedService>()
                     .AddHostedService<BirthdayHostedService>();

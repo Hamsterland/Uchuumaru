@@ -11,6 +11,7 @@ using Uchuumaru.Data.Models;
 namespace Uchuumaru.Services.MAL
 {
     /// <inheritdoc/>
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public class VerificationService : IVerificationService
     {
         /// <summary>

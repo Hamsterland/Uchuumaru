@@ -31,4 +31,8 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Uchuumaru.MyAnimeList\Uchuumaru.MyAnimeList.csproj" />
+    </ItemGroup>
+
 </Project>

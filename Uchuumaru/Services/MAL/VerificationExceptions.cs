@@ -3,6 +3,7 @@ using Discord;
 
 namespace Uchuumaru.Services.MAL
 {
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public class NoVerifiedProfilException : Exception
     {
         public NoVerifiedProfilException(IUser user)
@@ -11,6 +12,7 @@ namespace Uchuumaru.Services.MAL
         }
     }
     
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public class NoVerificationCodeException : Exception
     {
         public NoVerificationCodeException(IUser user)
@@ -19,6 +21,7 @@ namespace Uchuumaru.Services.MAL
         }
     }
     
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public class VerificationFailedException : Exception
     {
         public VerificationFailedException(IUser user)

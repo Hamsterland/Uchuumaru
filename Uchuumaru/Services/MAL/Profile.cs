@@ -5,6 +5,7 @@ namespace Uchuumaru.Services.MAL
     /// <summary>
     /// The profile of a MAL user.
     /// </summary>
+    [Obsolete("Inefficient, terrible code. Riddled with bugs. Replaced by Uchuumaru.MyAnimeList.")]
     public class Profile
     {
         /// <summary>
