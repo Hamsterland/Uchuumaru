@@ -60,10 +60,15 @@ namespace Uchuumaru.Services.Filters
         /// </returns>
         public async Task Handle(MessageReceivedNotification notification, CancellationToken cancellationToken)
         {
-            if (notification.Message.Channel is IDMChannel)
+
+            var message = notification.Message;
+
+            if (message.Channel is IDMChannel)
                 return;
             
-            var message = notification.Message;
+            if (message.Channel.Id == 317155403961991168)
+                return;
+            
             var author = message.Author as IGuildUser;
             var guild = (message.Channel as IGuildChannel).Guild;
 
@@ -97,7 +102,11 @@ namespace Uchuumaru.Services.Filters
                 
                 var sb = new StringBuilder();
                 foreach (var collection in matches)
-                    sb.AppendJoin(", ", collection.Select(x => x.Value));
+                {
+                    var display = collection.Select(x => x.Value);
+                    sb.AppendJoin(", ", display);
+                }
+                
                 var violations = sb.ToString();
                 
                 await message.DeleteAsync();
