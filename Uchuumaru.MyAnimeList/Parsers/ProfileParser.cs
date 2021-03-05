@@ -15,8 +15,9 @@ namespace Uchuumaru.MyAnimeList.Parsers
     public class ProfileParser : ParserBase
     {
         private readonly Regex _imageUrl =
-            new("https://cdn.myanimelist.net/images/userimages/(?<userId>[0-9]+).(png|jp(e)?g|gif)");
+            new($"{_imageCdn}(?<userId>[0-9]+).(png|jp(e)?g|gif)");
 
+        private const string _imageCdn = "https://cdn.myanimelist.net/images/userimages/";
         private const string _gender = "Gender";
         private const string _birthday = "Birthday";
         private const string _location = "Location";
@@ -49,10 +50,10 @@ namespace Uchuumaru.MyAnimeList.Parsers
         [DocumentProperty]
         public string GetImageUrl()
         {
-            return _imageUrl
-                .Match(base.HtmlDocument
+            return _imageUrl.Match(HtmlDocument
                     .Images
-                    .FirstOrDefault()
+                    .FirstOrDefault(x => x.OuterHtml
+                        .Contains(_imageCdn))
                     .OuterHtml)
                 .Value;
         }
@@ -148,7 +149,7 @@ namespace Uchuumaru.MyAnimeList.Parsers
                 .Children[1]
                 .TextContent;
         }
-        
+
         [ClearfixProperty]
         public string GetLocation()
         {
@@ -166,7 +167,7 @@ namespace Uchuumaru.MyAnimeList.Parsers
                 .Children[1]
                 .TextContent);
         }
-        
+
         private bool IsElementSpecified(string name)
         {
             return _clearfixElements
