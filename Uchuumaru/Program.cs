@@ -80,8 +80,6 @@ namespace Uchuumaru
                     .AddBirthdays()
                     .AddReports()
                     .AddSingleton<ProfileParser>()
-                    // .AddSingleton<IProfileParser, ProfileParser>()
-                    // .AddSingleton<IVerificationService, VerificationService>()
                     .AddHostedService<StartupHostedService>()
                     .AddHostedService<DiscordHostedService>()
                     .AddHostedService<BirthdayHostedService>();

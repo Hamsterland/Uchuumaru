@@ -76,13 +76,13 @@ namespace Uchuumaru.Services.MyAnimeList
 
         public ProfileEmbedBuilder WithBirthday(bool inline = true)
         {
-            AddField($"{_date} Birthday", Profile.Birthday, inline);
+            AddField($"{_date} Birthday", Profile.Birthday ?? "No Birthday", inline);
             return this;
         }
 
         public ProfileEmbedBuilder WithLocation(bool inline = true)
         {
-            AddField($"{_map} Location", Profile.Location, inline);
+            AddField($"{_map} Location", Profile.Location ?? "No Location", inline);
             return this;
         }
 
