@@ -26,7 +26,7 @@ namespace Uchuumaru.Services.MyAnimeList
         private readonly Emoji _alarmclock = new("\u23F0");
         private readonly Emoji _maleSign = new("♂️");
         private readonly Emoji _femaleSign = new("♀️");
-        private readonly Emoji _nonBinary = new("\u0030");
+        private readonly Emoji _nonBinary = new(":zero:");
         private readonly Emoji _unspecified = new("\u2753");
         private readonly Emoji _date = new("\uD83D\uDCC5");
         private readonly Emoji _map = new("🗺️");

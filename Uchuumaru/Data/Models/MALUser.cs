@@ -13,9 +13,7 @@ namespace Uchuumaru.Data.Models
         [Required]
         public ulong UserId { get; set; }
         public int MyAnimeListId { get; set; }
-
-        public int Token { get; set; }
-
+        
         [NotMapped]
         public bool IsVerified => MyAnimeListId != 0;
     }

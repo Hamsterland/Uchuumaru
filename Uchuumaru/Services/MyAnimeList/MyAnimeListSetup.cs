@@ -9,8 +9,8 @@ namespace Uchuumaru.Services.MyAnimeList
         {
             return collection
                 .AddScoped<ProfileParser>()
-                .AddScoped<CommentsParser>();
-            // .AddSingleton<IVerificationService, VerificationService>();
+                .AddScoped<CommentsParser>()
+                .AddScoped<IVerificationService, VerificationService>();
         }
     }
 }

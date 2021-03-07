@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -6,8 +7,10 @@ using Discord.Commands;
 using Discord.WebSocket;
 using MediatR;
 using Serilog;
+using Uchuumaru.Modules;
 using Uchuumaru.Notifications;
 using Uchuumaru.Notifications.Commands;
+using Uchuumaru.Services.MyAnimeList;
 
 namespace Uchuumaru.Services.Commands
 {
@@ -18,10 +21,12 @@ namespace Uchuumaru.Services.Commands
     public class CommandExecutedHandler : INotificationHandler<CommandExecutedNotification>
     {
         private readonly DiscordSocketClient _client;
+        private readonly IVerificationService _verification;
 
-        public CommandExecutedHandler(DiscordSocketClient client)
+        public CommandExecutedHandler(DiscordSocketClient client, IVerificationService verification)
         {
             _client = client;
+            _verification = verification;
         }
 
         /// <summary>

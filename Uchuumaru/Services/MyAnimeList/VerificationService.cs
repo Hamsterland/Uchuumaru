@@ -2,8 +2,14 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml.Schema;
+using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic;
 using Uchuumaru.Data;
 using Uchuumaru.Data.Models;
 using Uchuumaru.MyAnimeList.Models;
@@ -11,83 +17,125 @@ using Uchuumaru.MyAnimeList.Parsers;
 
 namespace Uchuumaru.Services.MyAnimeList
 {
-    public class VerificationService
+    public class VerificationService : IVerificationService
     {
-        private readonly UchuumaruContext _context;
-        private readonly DiscordSocketClient _client;
         private readonly ProfileParser _profileParser;
         private readonly CommentsParser _commentsParser;
+        private readonly IDbContextFactory<UchuumaruContext> _contextFactory;
 
         public VerificationService(
-            UchuumaruContext context,
-            DiscordSocketClient client,
             ProfileParser profileParser,
-            CommentsParser commentsParser)
+            CommentsParser commentsParser,
+            IDbContextFactory<UchuumaruContext> contextFactory)
         {
-            _context = context;
-            _client = client;
             _profileParser = profileParser;
             _commentsParser = commentsParser;
+            _contextFactory = contextFactory;
         }
 
         private readonly Random _random = new();
 
         private const int _tokenLower = 100000;
         private const int _tokenUpper = 999999;
-        private readonly ConcurrentDictionary<ulong, string> _usernames = new();
+        private const int _maxRetries = 3;
+        private const int _RetryWaitPeriod = 10000;
 
         public async Task<Profile> GetProfile(ulong userId)
         {
-            var user = await _context
-                .MALUsers
-                .FirstOrDefaultAsync(x => x.UserId == userId);
-
-            if (user is null || !user.IsVerified)
-                return null;
-
-            await _commentsParser.Download(user.MyAnimeListId);
-            var username = _commentsParser.GetUsername();
-            var profile = await Profile.FromUsername(username, _profileParser);
-            return profile;
-        }
-
-        public async Task Begin(ulong userId, string username, int token)
-        {
-            _usernames.AddOrUpdate(userId, username, (_, _) => username);
-            
-            var user = await _context
-                .MALUsers
-                .FirstOrDefaultAsync(x => x.UserId == userId);
-
-            if (user is null)
+            await using (var context = _contextFactory.CreateDbContext())
             {
-                user = new MALUser { UserId = userId };
-                _context.Add(user);
+                var user = await context
+                    .MALUsers
+                    .FirstOrDefaultAsync(x => x.UserId == userId);
+
+                if (user is null || !user.IsVerified)
+                    return null;
+
+                await _commentsParser.Download(user.MyAnimeListId);
+                var username = _commentsParser.GetUsername();
+                var profile = await Profile.FromUsername(username, _profileParser);
+                return profile;   
             }
-
-            user.Token = token;
-            await _context.SaveChangesAsync();
         }
 
-        public async Task Confirm(ulong userId)
+        public async Task Begin(IGuildUser author, string username, ITextChannel channel) 
         {
-            var success = _usernames.TryGetValue(userId, out var username);
+            await using (var _context = _contextFactory.CreateDbContext())
+            {
+                var user = await _context
+                    .MALUsers
+                    .FirstOrDefaultAsync(x => x.UserId == author.Id);
 
-            if (!success)
-                return;
-            
-            var user = await _context
-                .MALUsers
-                .FirstOrDefaultAsync(x => x.UserId == userId);
+                if (user is null)
+                {
+                    user = new MALUser { UserId = author.Id };
+                    _context.Add(user);
+                }
 
-            await _profileParser.Download(username);
+                var token = GetToken();
+                var avatar = author.GetAvatarUrl();
+                
+                var embed = new EmbedBuilder()
+                    .WithColor(Constants.DefaultColour)
+                    .WithAuthor(a => a
+                        .WithName($"{author}")
+                        .WithIconUrl(avatar))
+                    .WithDescription("Please set your MyAnimeList account Location field to the Token below. The rest is magic!")
+                    .AddField("Token", token, true)
+                    .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
+                    .Build();
 
-            var location = _profileParser.GetLocation();
-            
-            
+                var message = await channel.SendMessageAsync(embed: embed);
+                
+                var str = token.ToString();
+                var success = false;
+
+                for (var i = 0; i < _maxRetries; i++)
+                {
+                    await _profileParser.Download(username);
+
+                    if (_profileParser.GetLocation() == str)
+                    {
+                        success = true;
+                        break;
+                    }
+
+                    await Task.Delay(_RetryWaitPeriod);
+                }
+                
+                if (success)
+                {
+                    await message.ModifyAsync(msg =>
+                    {
+                        msg.Embed = new EmbedBuilder()
+                            .WithColor(Color.Green)
+                            .WithAuthor(a => a
+                                .WithName($"{author}")
+                                .WithIconUrl(avatar))
+                            .WithDescription("Successfully linked your account.")
+                            .Build();
+                    });
+                    
+                    user.MyAnimeListId = _profileParser.GetUserId();
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    await message.ModifyAsync(msg =>
+                    {
+                        msg.Embed = new EmbedBuilder()
+                            .WithColor(Color.Red)
+                            .WithAuthor(a => a
+                                .WithName($"{author}")
+                                .WithIconUrl(avatar))
+                            .WithDescription("Failed to link your account. Did you set your location correctly?")
+                            .Build();
+                    });
+                }
+            }
         }
-        
-        public int GetToken()
+
+        private int GetToken() 
             => _random.Next(_tokenLower, _tokenUpper);
     }
 }
