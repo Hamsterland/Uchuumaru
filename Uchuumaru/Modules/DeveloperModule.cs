@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using Uchuumaru.Preconditions;
 
 namespace Uchuumaru.Modules
@@ -11,6 +13,15 @@ namespace Uchuumaru.Modules
     [RequireDeveloper]
     public class DeveloperModule : ModuleBase<SocketCommandContext>
     {
+        [Command("pin")]
+        [Summary("Pins a message.")]
+        public async Task Ping(ulong messageId)
+        {
+            var message = await Context.Channel.GetMessageAsync(messageId) as IUserMessage;
+            await message.PinAsync();
+        }
+        
+        [Obsolete]
         [Command("restart")]
         [Summary("Restarts the bot.")]
         public Task Restart()
@@ -20,6 +31,7 @@ namespace Uchuumaru.Modules
             return Task.CompletedTask;
         }
         
+        [Obsolete]
         [Command("shutdown")]
         [Summary("Shuts down the bot.")]
         public Task Shutdown()
