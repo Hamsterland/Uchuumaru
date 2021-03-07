@@ -1,4 +1,6 @@
 ﻿using Discord;
+using Discord.Commands;
+using Humanizer;
 using Uchuumaru.MyAnimeList.Models;
 
 namespace Uchuumaru.Services.MyAnimeList
@@ -88,7 +90,7 @@ namespace Uchuumaru.Services.MyAnimeList
 
         public ProfileEmbedBuilder WithDateJoined(bool inline = true)
         {
-            AddField($"{_hourGlass} Joined", $"{Profile.DateJoined:D}", inline);
+            AddField($"{_hourGlass} Joined", $"{Profile.DateJoined.ToOrdinalWords()}", inline);
             return this;
         }
 
