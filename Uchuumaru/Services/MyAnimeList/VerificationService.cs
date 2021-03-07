@@ -40,6 +40,8 @@ namespace Uchuumaru.Services.MyAnimeList
         private const int _maxRetries = 3;
         private const int _RetryWaitPeriod = 10000;
 
+        private Emote _loading = Emote.Parse("<a:loading:818260297118384178>");
+        
         public async Task<Profile> GetProfile(ulong userId)
         {
             await using (var context = _contextFactory.CreateDbContext())
@@ -80,7 +82,7 @@ namespace Uchuumaru.Services.MyAnimeList
                     .WithAuthor(a => a
                         .WithName($"{author}")
                         .WithIconUrl(avatar))
-                    .WithDescription("Please set your MyAnimeList account Location field to the Token below. The rest is magic!")
+                    .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below. The rest is magic!")
                     .AddField("Token", token, true)
                     .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
                     .Build();
