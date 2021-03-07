@@ -74,15 +74,15 @@ namespace Uchuumaru.Services.MyAnimeList
             return this;
         }
 
-        public ProfileEmbedBuilder WithBirthday(bool inline = true)
+        public ProfileEmbedBuilder WithBirthday(string backupText = "No Birthday", bool inline = true)
         {
-            AddField($"{_date} Birthday", Profile.Birthday ?? "No Birthday", inline);
+            AddField($"{_date} Birthday", Profile.Birthday ?? backupText, inline);
             return this;
         }
 
-        public ProfileEmbedBuilder WithLocation(bool inline = true)
+        public ProfileEmbedBuilder WithLocation(string backupText = "No Location", bool inline = true)
         {
-            AddField($"{_map} Location", Profile.Location ?? "No Location", inline);
+            AddField($"{_map} Location", Profile.Location ?? backupText, inline);
             return this;
         }
 
@@ -96,6 +96,21 @@ namespace Uchuumaru.Services.MyAnimeList
         {
             AddField($"{_barChart} Mean Score", Profile.AnimeList.MeanScore, inline);
             return this;
+        }
+
+        public Embed BuildFullEmbed()
+        {
+            return new ProfileEmbedBuilder(Profile)
+                .WithName()
+                .WithProfileImage()
+                .WithListUrls()
+                .WithLastOnline()
+                .WithGender()
+                .WithBirthday()
+                .WithLocation()
+                .WithDateJoined()
+                .WithMeanScore()
+                .Build();
         }
     }
 }

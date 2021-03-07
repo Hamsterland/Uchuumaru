@@ -14,14 +14,19 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Uchuumaru.Data;
+using Uchuumaru.MyAnimeList.Parsers;
 using Uchuumaru.Services;
 using Uchuumaru.Services.Birthdays;
 using Uchuumaru.Services.Guilds;
 using Uchuumaru.Services.Infractions;
 using Uchuumaru.Services.Infractions.Reports;
+using Uchuumaru.Services.MAL;
+using Uchuumaru.Services.MyAnimeList;
 using Uchuumaru.Services.Users;
 using Uchuumaru.TypeReaders;
+using IVerificationService = Uchuumaru.Services.MyAnimeList.IVerificationService;
 using ProfileParser = Uchuumaru.MyAnimeList.Parsers.ProfileParser;
+using VerificationService = Uchuumaru.Services.MyAnimeList.VerificationService;
 
 namespace Uchuumaru
 {
@@ -79,7 +84,7 @@ namespace Uchuumaru
                     .AddUsers()
                     .AddBirthdays()
                     .AddReports()
-                    .AddSingleton<ProfileParser>()
+                    .AddMyAnimeList()
                     .AddHostedService<StartupHostedService>()
                     .AddHostedService<DiscordHostedService>()
                     .AddHostedService<BirthdayHostedService>();

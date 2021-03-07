@@ -12,11 +12,12 @@ namespace Uchuumaru.Data.Models
         
         [Required]
         public ulong UserId { get; set; }
-        public int MAL { get; set; }
-        public string VerificationCode { get; set; }
+        public int MyAnimeListId { get; set; }
+
+        public int Token { get; set; }
 
         [NotMapped]
-        public bool IsVerified => MAL != 0;
+        public bool IsVerified => MyAnimeListId != 0;
     }
     
     public class MALUserConfiguration : IEntityTypeConfiguration<MALUser>
@@ -32,11 +33,7 @@ namespace Uchuumaru.Data.Models
                 .IsUnique();
             
             builder
-                .HasIndex(x => x.MAL)
-                .IsUnique();
-            
-            builder
-                .HasIndex(x => x.VerificationCode)
+                .HasIndex(x => x.MyAnimeListId)
                 .IsUnique();
         }
     }
