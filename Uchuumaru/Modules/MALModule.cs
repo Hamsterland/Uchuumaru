@@ -20,7 +20,9 @@ namespace Uchuumaru.Modules
         674424406600319018,     // Former Admin
         781950226423349298,     // Rewrite Moderator
         225940071516209153,     // Coordinator
-        460285613040730112)]    // Botcon
+        460285613040730112,     // Botcon
+        225940207919300608,     // Writer
+        225940152600625152)]    // Editor
     public class MALModule : ModuleBase<SocketCommandContext>
     {
         private readonly ProfileParser _parser;
