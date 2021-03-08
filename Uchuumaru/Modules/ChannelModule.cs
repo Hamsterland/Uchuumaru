@@ -9,6 +9,7 @@ namespace Uchuumaru.Modules
 {
     [Name("Channel")]
     [Summary("For large-scale channel-related tasks.")]
+    [RequireModeratorOrDeveloper]
     public class ChannelModule : ModuleBase<SocketCommandContext>
     {
         [Command("prune")]
