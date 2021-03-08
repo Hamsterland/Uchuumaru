@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿
+
+using System;
 using System.Threading.Tasks;
-using System.Xml.Schema;
 using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualBasic;
 using Uchuumaru.Data;
 using Uchuumaru.Data.Models;
 using Uchuumaru.MyAnimeList.Models;
@@ -37,10 +31,10 @@ namespace Uchuumaru.Services.MyAnimeList
 
         private const int _tokenLower = 100000;
         private const int _tokenUpper = 999999;
-        private const int _maxRetries = 3;
-        private const int _RetryWaitPeriod = 10000;
+        private const int _maxRetries = 6;
+        private const int _retryWaitPeriod = 10000;
 
-        private Emote _loading = Emote.Parse("<a:loading:818260297118384178>");
+        private readonly Emote _loading = Emote.Parse("<a:loading:818260297118384178>");
         
         public async Task<Profile> GetProfile(ulong userId)
         {
@@ -62,16 +56,16 @@ namespace Uchuumaru.Services.MyAnimeList
 
         public async Task Begin(IGuildUser author, string username, ITextChannel channel) 
         {
-            await using (var _context = _contextFactory.CreateDbContext())
+            await using (var context = _contextFactory.CreateDbContext())
             {
-                var user = await _context
+                var user = await context
                     .MALUsers
                     .FirstOrDefaultAsync(x => x.UserId == author.Id);
 
                 if (user is null)
                 {
                     user = new MALUser { UserId = author.Id };
-                    _context.Add(user);
+                    context.Add(user);
                 }
 
                 var token = GetToken();
@@ -82,9 +76,10 @@ namespace Uchuumaru.Services.MyAnimeList
                     .WithAuthor(a => a
                         .WithName($"{author}")
                         .WithIconUrl(avatar))
-                    .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below. The rest is magic!")
+                    .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below.")
                     .AddField("Token", token, true)
                     .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
+                    .WithFooter($"You have {_retryWaitPeriod * _maxRetries / 1000} seconds")
                     .Build();
 
                 var message = await channel.SendMessageAsync(embed: embed);
@@ -102,7 +97,7 @@ namespace Uchuumaru.Services.MyAnimeList
                         break;
                     }
 
-                    await Task.Delay(_RetryWaitPeriod);
+                    await Task.Delay(_retryWaitPeriod);
                 }
                 
                 if (success)
@@ -119,7 +114,7 @@ namespace Uchuumaru.Services.MyAnimeList
                     });
                     
                     user.MyAnimeListId = _profileParser.GetUserId();
-                    await _context.SaveChangesAsync();
+                    await context.SaveChangesAsync();
                 }
                 else
                 {

@@ -11,18 +11,6 @@ namespace Uchuumaru.Modules
     [Name("MyAnimeList")]
     [Group("mal")]
     [Summary("I assert that Anilist is better.")]
-    [RequireRoles(
-        301125242749714442,     // Moderator
-        389930012855238657,     // Retired Moderator
-        302310311074070531,     // Site Admin
-        301127756467535885,     // Site Staff
-        312948066661695488,     // Retired Site Staff
-        674424406600319018,     // Former Admin
-        781950226423349298,     // Rewrite Moderator
-        225940071516209153,     // Coordinator
-        460285613040730112,     // Botcon
-        225940207919300608,     // Writer
-        225940152600625152)]    // Editor
     public class MALModule : ModuleBase<SocketCommandContext>
     {
         private readonly ProfileParser _parser;
