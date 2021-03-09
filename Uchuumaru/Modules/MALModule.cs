@@ -34,7 +34,8 @@ namespace Uchuumaru.Modules
                 var uchuu = new EmbedBuilder()
                     .WithColor(new Color(92, 132, 255))
                     .WithImageUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
-                    .WithTitle("[Uchuu's Profile](https://anilist.co/user/Uchuu/)")
+                    .WithTitle("Uchuu's Profile")
+                    .WithUrl("https://anilist.co/user/Uchuu/")
                     .Build();
 
                 await ReplyAsync(embed: uchuu);
