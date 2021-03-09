@@ -86,7 +86,7 @@ namespace Uchuumaru.MyAnimeList.Models
         /// </returns>
         public static async Task<Profile> FromUsername(string username, ProfileParser parser)
         {
-            await parser.Download(username);
+            await parser.Refresh(username);
 
             return new Profile
             {

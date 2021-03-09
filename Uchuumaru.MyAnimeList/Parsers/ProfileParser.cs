@@ -37,7 +37,7 @@ namespace Uchuumaru.MyAnimeList.Parsers
         /// <returns>
         /// A <see cref="Task"/> that returns upon completion.
         /// </returns>
-        public async Task Download(string username)
+        public async Task Refresh(string username)
         {
             await DownloadDocument(MyAnimeListRootUrl + ProfileUrl + username);
 

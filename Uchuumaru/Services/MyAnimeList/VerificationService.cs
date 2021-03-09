@@ -31,33 +31,38 @@ namespace Uchuumaru.Services.MyAnimeList
 
         private const int _tokenLower = 100000;
         private const int _tokenUpper = 999999;
-        private const int _maxRetries = 6;
-        private const int _retryWaitPeriod = 10000;
+        public const int MaxRetries = 6;
+        public const int RetryWaitPeriod = 10000;
 
-        private readonly Emote _loading = Emote.Parse("<a:loading:818260297118384178>");
-        
         public async Task<Profile> GetProfile(ulong userId)
         {
-            await using (var context = _contextFactory.CreateDbContext())
+            await using (var context = _contextFactory.CreateDbContext()) 
             {
                 var user = await context
                     .MALUsers
                     .FirstOrDefaultAsync(x => x.UserId == userId);
-
+            
                 if (user is null || !user.IsVerified)
                     return null;
-
+            
                 await _commentsParser.Download(user.MyAnimeListId);
                 var username = _commentsParser.GetUsername();
-                var profile = await Profile.FromUsername(username, _profileParser);
-                return profile;   
+                return await Profile.FromUsername(username, _profileParser);
             }
         }
 
-        public async Task Begin(IGuildUser author, string username, ITextChannel channel) 
+        public async Task<VerificationResult> Verify(IGuildUser author, string username, int token) 
         {
             await using (var context = _contextFactory.CreateDbContext())
             {
+                await _profileParser.Refresh(username);
+                var dateJoined = _profileParser.GetDateJoined();
+                
+                if (DateTime.UtcNow.Ticks - dateJoined.Ticks < TimeSpan.FromDays(30).Ticks)
+                    return VerificationResult.FromError(VerificationError.AccountAge, $"{author} your account must be at least 30 days old.");
+                
+                // TODO: Add account activity check
+                
                 var user = await context
                     .MALUsers
                     .FirstOrDefaultAsync(x => x.UserId == author.Id);
@@ -67,29 +72,13 @@ namespace Uchuumaru.Services.MyAnimeList
                     user = new MALUser { UserId = author.Id };
                     context.Add(user);
                 }
-
-                var token = GetToken();
-                var avatar = author.GetAvatarUrl();
-                
-                var embed = new EmbedBuilder()
-                    .WithColor(Constants.DefaultColour)
-                    .WithAuthor(a => a
-                        .WithName($"{author}")
-                        .WithIconUrl(avatar))
-                    .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below.")
-                    .AddField("Token", token, true)
-                    .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
-                    .WithFooter($"You have {_retryWaitPeriod * _maxRetries / 1000} seconds")
-                    .Build();
-
-                var message = await channel.SendMessageAsync(embed: embed);
                 
                 var str = token.ToString();
                 var success = false;
 
-                for (var i = 0; i < _maxRetries; i++)
+                for (var i = 0; i < MaxRetries; i++)
                 {
-                    await _profileParser.Download(username);
+                    await _profileParser.Refresh(username);
 
                     if (_profileParser.GetLocation() == str)
                     {
@@ -97,42 +86,21 @@ namespace Uchuumaru.Services.MyAnimeList
                         break;
                     }
 
-                    await Task.Delay(_retryWaitPeriod);
+                    await Task.Delay(RetryWaitPeriod);
                 }
-                
+
                 if (success)
                 {
-                    await message.ModifyAsync(msg =>
-                    {
-                        msg.Embed = new EmbedBuilder()
-                            .WithColor(Color.Green)
-                            .WithAuthor(a => a
-                                .WithName($"{author}")
-                                .WithIconUrl(avatar))
-                            .WithDescription("Successfully linked your account.")
-                            .Build();
-                    });
-                    
                     user.MyAnimeListId = _profileParser.GetUserId();
                     await context.SaveChangesAsync();
+                    return VerificationResult.FromSuccess();
                 }
-                else
-                {
-                    await message.ModifyAsync(msg =>
-                    {
-                        msg.Embed = new EmbedBuilder()
-                            .WithColor(Color.Red)
-                            .WithAuthor(a => a
-                                .WithName($"{author}")
-                                .WithIconUrl(avatar))
-                            .WithDescription("Failed to link your account. Did you set your location correctly?")
-                            .Build();
-                    });
-                }
+                
+                return VerificationResult.FromError(VerificationError.InvalidLocation, $"{author} Failed to verify. Did you set your Location correctly?");
             }
         }
 
-        private int GetToken() 
+        public int GetToken() 
             => _random.Next(_tokenLower, _tokenUpper);
     }
 }

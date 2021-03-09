@@ -3,7 +3,6 @@ using Discord;
 using Discord.Commands;
 using Uchuumaru.MyAnimeList.Models;
 using Uchuumaru.MyAnimeList.Parsers;
-using Uchuumaru.Preconditions;
 using Uchuumaru.Services.MyAnimeList;
 
 namespace Uchuumaru.Modules
@@ -21,6 +20,8 @@ namespace Uchuumaru.Modules
             _parser = parser;
             _verification = verification;
         }
+        
+        private readonly Emote _loading = Emote.Parse("<a:loading:818260297118384178>");
         
         [Command]
         [Summary("Finds a user's MAL account.")]
@@ -45,7 +46,49 @@ namespace Uchuumaru.Modules
         [Summary("Sets a MAL account.")]
         public async Task Set(string username)
         {
-            await _verification.Begin(Context.User as IGuildUser, username, Context.Channel as ITextChannel);
+            var token = _verification.GetToken();
+            var avatar = Context.User.GetAvatarUrl();
+            
+            var embed = new EmbedBuilder()
+                .WithColor(Constants.DefaultColour)
+                .WithAuthor(author => author
+                    .WithName($"{Context.User}")
+                    .WithIconUrl(avatar))
+                .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below.")
+                .AddField("Token", token, true)
+                .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
+                .WithFooter($"You have {VerificationService.RetryWaitPeriod * VerificationService.MaxRetries / 1000} seconds")
+                .Build();
+
+            var message = await ReplyAsync(embed: embed);
+            var result = await _verification.Verify(Context.User as IGuildUser, username, token);
+
+            if (result.IsSuccess)
+            {
+                await message.ModifyAsync(msg =>
+                {
+                    msg.Embed = new EmbedBuilder()
+                        .WithColor(Color.Green)
+                        .WithAuthor(author => author
+                            .WithName($"{Context.User}")
+                            .WithIconUrl(avatar))
+                        .WithDescription("Successfully linked your account.")
+                        .Build();
+                });
+
+                return;
+            }
+
+            await message.ModifyAsync(msg =>
+            {
+                msg.Embed = new EmbedBuilder()
+                    .WithColor(Color.Red)
+                    .WithAuthor(a => a
+                        .WithName($"{Context.User}")
+                        .WithIconUrl(avatar))
+                    .WithDescription(result.ErrorReason)
+                    .Build();
+            });
         }
         
         [Command("search")]
