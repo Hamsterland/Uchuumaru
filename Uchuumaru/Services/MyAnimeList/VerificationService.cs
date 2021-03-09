@@ -16,14 +16,17 @@ namespace Uchuumaru.Services.MyAnimeList
         private readonly ProfileParser _profileParser;
         private readonly CommentsParser _commentsParser;
         private readonly IDbContextFactory<UchuumaruContext> _contextFactory;
+        private readonly IActivityService _activity;
 
         public VerificationService(
             ProfileParser profileParser,
             CommentsParser commentsParser,
-            IDbContextFactory<UchuumaruContext> contextFactory)
+            IDbContextFactory<UchuumaruContext> contextFactory,
+            IActivityService activity)
         {
             _profileParser = profileParser;
             _commentsParser = commentsParser;
+            _activity = activity;
             _contextFactory = contextFactory;
         }
 
@@ -52,19 +55,33 @@ namespace Uchuumaru.Services.MyAnimeList
             }
         }
 
+        public async Task<VerificationResult> Authenticate(string username)
+        {
+            await _profileParser.Refresh(username);
+            var dateJoined = _profileParser.GetDateJoined();
+                
+            if (DateTime.UtcNow.Ticks - dateJoined.Ticks < _minimumAccountAge.Ticks)
+                return VerificationResult.FromError(VerificationError.AccountAge, 
+                    $"Failed to verify. Your account must be at least {_minimumAccountAge} days old.");
+                
+            var anime = await _activity.CheckActivity(username, ListOptions.Anime);
+            var manga = await _activity.CheckActivity(username, ListOptions.Manga);
+
+            if (!anime.HasValue || !manga.HasValue)
+                return VerificationResult.FromError(VerificationError.PrivateLists, 
+                    "Failed to verify. One or more of your lists are private. Please make them accessible.");
+
+            if (anime is not > 0.5 and < 14 || manga is not > 0.5 and < 14)
+                return VerificationResult.FromError(VerificationError.AccountActivity,
+                    "Failed to verify. Your account is too inactive. You must regularly update your list to show activity. Spamming entries will not help.");
+
+            return VerificationResult.FromSuccess();
+        }
+        
         public async Task<VerificationResult> Verify(IGuildUser author, string username, int token) 
         {
             await using (var context = _contextFactory.CreateDbContext())
             {
-                await _profileParser.Refresh(username);
-                var dateJoined = _profileParser.GetDateJoined();
-                
-                if (DateTime.UtcNow.Ticks - dateJoined.Ticks < _minimumAccountAge.Ticks)
-                    return VerificationResult.FromError(VerificationError.AccountAge, 
-                        $"{author} Failed to verify. Your account must be at least 30 days old.");
-                
-                // TODO: Add account activity check
-                
                 var user = await context
                     .MALUsers
                     .FirstOrDefaultAsync(x => x.UserId == author.Id);
@@ -102,7 +119,7 @@ namespace Uchuumaru.Services.MyAnimeList
                     $"{author} Failed to verify. Did you set your Location correctly?");
             }
         }
-
+        
         public int GetToken() 
             => _random.Next(_tokenLower, _tokenUpper);
     }

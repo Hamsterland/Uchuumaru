@@ -8,6 +8,7 @@ namespace Uchuumaru.Services.MyAnimeList
     public interface IVerificationService
     {
         Task<Profile> GetProfile(ulong userId);
+        Task<VerificationResult> Authenticate(string username);
         Task<VerificationResult> Verify(IGuildUser author, string username, int token);
         int GetToken();
     }

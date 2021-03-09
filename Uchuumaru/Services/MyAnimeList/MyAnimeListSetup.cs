@@ -10,6 +10,7 @@ namespace Uchuumaru.Services.MyAnimeList
             return collection
                 .AddScoped<ProfileParser>()
                 .AddScoped<CommentsParser>()
+                .AddScoped<IActivityService, ActivityService>()
                 .AddScoped<IVerificationService, VerificationService>();
         }
     }

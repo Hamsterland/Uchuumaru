@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Uchuumaru.MyAnimeList.Models;
 using Uchuumaru.MyAnimeList.Parsers;
+using Uchuumaru.Preconditions;
 using Uchuumaru.Services.MyAnimeList;
 
 namespace Uchuumaru.Modules
@@ -29,7 +31,7 @@ namespace Uchuumaru.Modules
         {
             user ??= Context.User as IGuildUser;
 
-            Profile profile = null;
+            Profile profile;
             
             switch (user.Id)
             {
@@ -37,29 +39,13 @@ namespace Uchuumaru.Modules
                 case 330746772378877954:
                 {
                     profile = await _verification.GetProfile(330746772378877954);
-                    
-                    var uchuu = new ProfileEmbedBuilder(profile)
-                        .WithLastOnline()
-                        .WithGender()
-                        .WithBirthday()
-                        .WithLocation()
-                        .WithDateJoined()
-                        .WithMeanScore()
-                        .WithColor(new Color(92, 132, 255))
-                        .WithThumbnailUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
-                        .WithImageUrl("https://i.imgur.com/2eO7DCI.png")
-                        .WithTitle("Uchuu's Profile")
-                        .WithUrl("https://anilist.co/user/Uchuu/")
-                        .WithDescription("[Anime List](https://anilist.co/user/Uchuu/animelist) • [Manga List](https://anilist.co/user/Uchuu/mangalist)")
-                        .Build();
-
-                    await ReplyAsync(embed: uchuu);
+                    await ReplyAsync(embed: UchuuProfileEmbed(profile));
                     return;
                 }
                 
                 // Tincan 
                 case 153286487314661376:
-                    profile = await _verification.GetProfile(422805690818625567);
+                    profile = await _verification.GetProfile(422805690818625567); // Yuna
                     break;
                 default:
                     profile = await _verification.GetProfile(user.Id);
@@ -79,24 +65,49 @@ namespace Uchuumaru.Modules
         
         [Command("set", RunMode = RunMode.Async)]
         [Summary("Sets a MAL account.")]
+        [MyAnimeListOnly]
         public async Task Set(string username)
         {
-            var token = _verification.GetToken();
+            var user = Context.User as IGuildUser;
             var avatar = Context.User.GetAvatarUrl();
-            
             var embed = new EmbedBuilder()
-                .WithColor(Constants.DefaultColour)
                 .WithAuthor(author => author
                     .WithName($"{Context.User}")
-                    .WithIconUrl(avatar))
+                    .WithIconUrl(avatar));
+
+            VerificationResult result;
+
+            var roles = user.RoleIds.ToList();
+            const ulong verified = 372178027926519810;
+            
+            if (!roles.Contains(verified))
+            {
+                result = await _verification.Authenticate(username);
+
+                if (!result.IsSuccess)
+                {
+                    embed
+                        .WithColor(Color.Red)
+                        .WithDescription(result.ErrorReason);
+
+                    await ReplyAsync(embed: embed.Build());
+                    return;
+                }               
+            }
+            
+            var token = _verification.GetToken();
+
+            embed
+                .WithColor(Constants.DefaultColour)
                 .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below.")
                 .AddField("Token", token, true)
                 .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
                 .WithFooter($"You have {VerificationService.RetryWaitPeriod * VerificationService.MaxRetries / 1000} seconds")
                 .Build();
 
-            var message = await ReplyAsync(embed: embed);
-            var result = await _verification.Verify(Context.User as IGuildUser, username, token);
+            var message = await ReplyAsync(embed: embed.Build());
+            
+            result = await _verification.Verify(user, username, token);
 
             if (result.IsSuccess)
             {
@@ -134,7 +145,23 @@ namespace Uchuumaru.Modules
             var embed = new ProfileEmbedBuilder(profile).BuildFullEmbed();
             await ReplyAsync(embed: embed);
         }
-        
-        
+
+        private static Embed UchuuProfileEmbed(Profile profile)
+        {
+            return new ProfileEmbedBuilder(profile)
+                .WithLastOnline()
+                .WithGender()
+                .WithBirthday()
+                .WithLocation()
+                .WithDateJoined()
+                .WithMeanScore()
+                .WithColor(92, 132, 255)
+                .WithThumbnailUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
+                .WithImageUrl("https://i.imgur.com/2eO7DCI.png")
+                .WithTitle("Uchuu's Profile")
+                .WithUrl("https://anilist.co/user/Uchuu/")
+                .WithDescription("[Anime List](https://anilist.co/user/Uchuu/animelist) • [Manga List](https://anilist.co/user/Uchuu/mangalist)")
+                .Build();
+        }
     }
 }
