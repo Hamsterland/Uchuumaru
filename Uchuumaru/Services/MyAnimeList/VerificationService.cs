@@ -33,6 +33,7 @@ namespace Uchuumaru.Services.MyAnimeList
         private const int _tokenUpper = 999999;
         public const int MaxRetries = 6;
         public const int RetryWaitPeriod = 10000;
+        private readonly TimeSpan _minimumAccountAge = TimeSpan.FromDays(30);
 
         public async Task<Profile> GetProfile(ulong userId)
         {
@@ -58,8 +59,9 @@ namespace Uchuumaru.Services.MyAnimeList
                 await _profileParser.Refresh(username);
                 var dateJoined = _profileParser.GetDateJoined();
                 
-                if (DateTime.UtcNow.Ticks - dateJoined.Ticks < TimeSpan.FromDays(30).Ticks)
-                    return VerificationResult.FromError(VerificationError.AccountAge, $"{author} your account must be at least 30 days old.");
+                if (DateTime.UtcNow.Ticks - dateJoined.Ticks < _minimumAccountAge.Ticks)
+                    return VerificationResult.FromError(VerificationError.AccountAge, 
+                        $"{author} Failed to verify. Your account must be at least 30 days old.");
                 
                 // TODO: Add account activity check
                 
@@ -96,7 +98,8 @@ namespace Uchuumaru.Services.MyAnimeList
                     return VerificationResult.FromSuccess();
                 }
                 
-                return VerificationResult.FromError(VerificationError.InvalidLocation, $"{author} Failed to verify. Did you set your Location correctly?");
+                return VerificationResult.FromError(VerificationError.InvalidLocation, 
+                    $"{author} Failed to verify. Did you set your Location correctly?");
             }
         }
 

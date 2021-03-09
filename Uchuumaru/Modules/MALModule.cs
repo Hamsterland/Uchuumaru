@@ -29,6 +29,18 @@ namespace Uchuumaru.Modules
         {
             user ??= Context.User as IGuildUser;
 
+            if (user.Id == 330746772378877954)
+            {
+                var uchuu = new EmbedBuilder()
+                    .WithColor(new Color(92, 132, 255))
+                    .WithImageUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
+                    .WithTitle("[Uchuu's Profile](https://anilist.co/user/Uchuu/)")
+                    .Build();
+
+                await ReplyAsync(embed: uchuu);
+                return;
+            }
+            
             var profile = await _verification.GetProfile(user.Id);
 
             if (profile is null)
