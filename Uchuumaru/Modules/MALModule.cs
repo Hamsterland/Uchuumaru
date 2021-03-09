@@ -29,20 +29,29 @@ namespace Uchuumaru.Modules
         {
             user ??= Context.User as IGuildUser;
 
-            if (user.Id == 330746772378877954)
-            {
-                var uchuu = new EmbedBuilder()
-                    .WithColor(new Color(92, 132, 255))
-                    .WithImageUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
-                    .WithTitle("Uchuu's Profile")
-                    .WithUrl("https://anilist.co/user/Uchuu/")
-                    .Build();
-
-                await ReplyAsync(embed: uchuu);
-                return;
-            }
+            Profile profile = null;
             
-            var profile = await _verification.GetProfile(user.Id);
+            switch (user.Id)
+            {
+                case 330746772378877954:
+                {
+                    var uchuu = new EmbedBuilder()
+                        .WithColor(new Color(92, 132, 255))
+                        .WithImageUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
+                        .WithTitle("Uchuu's Profile")
+                        .WithUrl("https://anilist.co/user/Uchuu/")
+                        .Build();
+
+                    await ReplyAsync(embed: uchuu);
+                    return;
+                }
+                case 153286487314661376:
+                    profile = await _verification.GetProfile(422805690818625567);
+                    break;
+                default:
+                    profile = await _verification.GetProfile(user.Id);
+                    break;
+            }
 
             if (profile is null)
             {
