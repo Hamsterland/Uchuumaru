@@ -43,12 +43,12 @@ namespace Uchuumaru.MyAnimeList.Models
         /// <summary>
         /// The anime list.
         /// </summary>
-        public List AnimeList { get; init; }
+        public List AnimeList { get; set; }
 
         /// <summary>
         /// The manga list.
         /// </summary>
-        public List MangaList { get; init; }
+        public List MangaList { get; set; }
 
         /// <summary>
         /// Whether the account has MAL Supporter.

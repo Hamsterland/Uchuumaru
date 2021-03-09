@@ -33,18 +33,31 @@ namespace Uchuumaru.Modules
             
             switch (user.Id)
             {
+                // Uchuu
                 case 330746772378877954:
                 {
-                    var uchuu = new EmbedBuilder()
+                    profile = await _verification.GetProfile(330746772378877954);
+                    
+                    var uchuu = new ProfileEmbedBuilder(profile)
+                        .WithLastOnline()
+                        .WithGender()
+                        .WithBirthday()
+                        .WithLocation()
+                        .WithDateJoined()
+                        .WithMeanScore()
                         .WithColor(new Color(92, 132, 255))
-                        .WithImageUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
+                        .WithThumbnailUrl("https://anilist.co/img/icons/android-chrome-512x512.png")
+                        .WithImageUrl("https://i.imgur.com/2eO7DCI.png")
                         .WithTitle("Uchuu's Profile")
                         .WithUrl("https://anilist.co/user/Uchuu/")
+                        .WithDescription("[Anime List](https://anilist.co/user/Uchuu/animelist) • [Manga List](https://anilist.co/user/Uchuu/mangalist)")
                         .Build();
 
                     await ReplyAsync(embed: uchuu);
                     return;
                 }
+                
+                // Tincan 
                 case 153286487314661376:
                     profile = await _verification.GetProfile(422805690818625567);
                     break;
