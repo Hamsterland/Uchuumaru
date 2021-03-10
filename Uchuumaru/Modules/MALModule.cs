@@ -67,6 +67,8 @@ namespace Uchuumaru.Modules
             await ReplyAsync(embed: embed);
         }
 
+        [Command("id")]
+        [Summary("Gets a user's MyAnimeList Id.")]
         public async Task Id(string username)
         {
             if (!await _verification.AccountExists(username))
