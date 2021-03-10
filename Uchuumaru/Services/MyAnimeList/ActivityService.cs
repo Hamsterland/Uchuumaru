@@ -46,7 +46,6 @@ namespace Uchuumaru.Services.MyAnimeList
             }
 
             dates = dates.OrderBy(x => x).ToList();
-            
             var diff = dates.Max().Subtract(dates.Min());
             var average = TimeSpan.FromTicks(diff.Ticks / (dates.Count - 1));
             return average.TotalDays;

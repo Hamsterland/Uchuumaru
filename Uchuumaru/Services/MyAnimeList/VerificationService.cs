@@ -67,7 +67,6 @@ namespace Uchuumaru.Services.MyAnimeList
         public async Task<VerificationResult> Authenticate(string username)
         {
             await _profileParser.Refresh(username);
-            
             var dateJoined = _profileParser.GetDateJoined();
                 
             if (DateTime.UtcNow.Ticks - dateJoined.Ticks < _minimumAccountAge.Ticks)
@@ -83,7 +82,8 @@ namespace Uchuumaru.Services.MyAnimeList
             
             if (anime is not > 0.5 and < 14 || manga is not > 0.5 and < 14)
                 return VerificationResult.FromError(VerificationError.AccountActivity,
-                    "Failed to verify. Your account is too inactive. You must regularly update your list to show activity. Spamming entries will not help.");
+                    "Failed to verify. Your account is too inactive. " +
+                    "You must regularly update your list to show activity. Spamming entries will not help.");
 
             return VerificationResult.FromSuccess();
         }
@@ -126,7 +126,8 @@ namespace Uchuumaru.Services.MyAnimeList
                 }
                 
                 return VerificationResult.FromError(VerificationError.InvalidLocation, 
-                    $"{author} Failed to verify. Did you set your Location correctly?");
+                    "Failed to verify. Did you set your Location correctly? " +
+                    $"Remember that you must do this within {RetryWaitPeriod * MaxRetries / 1000} seconds.");
             }
         }
         

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Uchuumaru.Preconditions;
 using Uchuumaru.Services.MyAnimeList;
+using static Uchuumaru.Constants;
 
 namespace Uchuumaru.Modules
 {
@@ -14,22 +13,20 @@ namespace Uchuumaru.Modules
 
         [Command("set", RunMode = RunMode.Async)]
         [Summary("Sets a MAL account.")]
-        [MyAnimeListOnly]
         public async Task Set(string username)
         {
             var user = Context.User as IGuildUser;
             var avatar = Context.User.GetAvatarUrl();
-            
-            var embed = new EmbedBuilder()
+
+            var builder = new EmbedBuilder()
                 .WithAuthor(author => author
                     .WithName($"{Context.User}")
                     .WithIconUrl(avatar));
 
             if (!await _verification.AccountExists(username))
             {
-                embed.WithColor(Color.Red)
-                    .WithDescription($"Failed to verify. Account \"{username}\" does not exist.");
-                await ReplyAsync(embed: embed.Build());
+                AppendNonExistantAccountToEmbed(builder, username);
+                await ReplyAsync(embed: builder.Build());
                 return;
             }
 
@@ -40,9 +37,9 @@ namespace Uchuumaru.Modules
                 .ToList();
 
             IRole verified = null;
-            if (Context.Guild.Id == 301123999000166400)
+            if (Context.Guild.Id == MyAnimeListId)
             {
-                verified = Context.Guild.GetRole(372178027926519810);
+                verified = Context.Guild.GetRole(VerifiedId);
 
                 if (!roles.Contains(verified.Id))
                 {
@@ -50,63 +47,71 @@ namespace Uchuumaru.Modules
 
                     if (!result.IsSuccess)
                     {
-                        embed.WithColor(Color.Red)
+                        builder
+                            .WithColor(Color.Red)
                             .WithDescription(result.ErrorReason);
-                        await ReplyAsync(embed: embed.Build());
+
+                        await ReplyAsync(embed: builder.Build());
                         return;
                     }
                 }
             }
-
+            
             var token = _verification.GetToken();
-
-            embed
-                .WithColor(Constants.DefaultColour)
-                .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below.")
-                .AddField("Token", token, true)
-                .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
-                .WithFooter(
-                    $"You have {VerificationService.RetryWaitPeriod * VerificationService.MaxRetries / 1000} seconds")
-                // .WithImageUrl("https://timer.plus/" +
-                //               $"{DateTime.Now.Year:####}," +
-                //               $"{DateTime.Now.Month:##}," +
-                //               $"{DateTime.Now.Day:##}," +
-                //               $"{DateTime.Now.Hour - 5:##}," +
-                //               $"{DateTime.Now.Minute + 1:##}," +
-                //               $"{DateTime.Now.Second:##}.gif")
-                .Build();
-
-            var message = await ReplyAsync(embed: embed.Build());
-
+            AppendVerifyAccountToEmbed(builder, token.ToString());
+            var message = await ReplyAsync(embed: builder.Build());
+            
             result = await _verification.Verify(user, username, token);
             if (result.IsSuccess)
             {
-                await message.ModifyAsync(msg =>
-                {
-                    msg.Embed = new EmbedBuilder()
-                        .WithAuthor(author => author
-                            .WithName($"{Context.User}")
-                            .WithIconUrl(avatar))
-                        .WithColor(Color.Green)
-                        .WithDescription("Successfully linked your account.")
-                        .Build();
-                });
+                await message.ModifyAsync(msg => msg.Embed = GetSuccessEmbed(avatar));
 
-                if (Context.Guild.Id == 301123999000166400)
+                if (Context.Guild.Id == MyAnimeListId)
                     await user.AddRoleAsync(verified);
+                
                 return;
             }
 
-            await message.ModifyAsync(msg =>
-            {
-                msg.Embed = new EmbedBuilder()
-                        .WithAuthor(author => author
-                            .WithName($"{Context.User}")
-                            .WithIconUrl(avatar))
-                    .WithColor(Color.Red)
-                    .WithDescription(result.ErrorReason)
-                    .Build();
-            });
+            await message.ModifyAsync(msg => msg.Embed = GetFailureEmbed(result, avatar));
+        }
+
+        private Embed GetSuccessEmbed(string avatar)
+        {
+            return new EmbedBuilder()
+                .WithAuthor(author => author
+                    .WithName($"{Context.User}")
+                    .WithIconUrl(avatar))
+                .WithColor(Color.Green)
+                .WithDescription("Successfully linked your account.")
+                .Build();
+        }
+
+        public Embed GetFailureEmbed(VerificationResult result, string avatar)
+        {
+            return new EmbedBuilder()
+                .WithAuthor(author => author
+                    .WithName($"{Context.User}")
+                    .WithIconUrl(avatar))
+                .WithColor(Color.Red)
+                .WithDescription(result.ErrorReason)
+                .Build();
+        }
+
+        private void AppendVerifyAccountToEmbed(EmbedBuilder builder, string token)
+        {
+            builder
+                .WithColor(DefaultColour)
+                .WithDescription($"{_loading} Please set your MyAnimeList account Location field to the Token below.")
+                .AddField("Token", token, true)
+                .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
+                .WithFooter($"You have {VerificationService.RetryWaitPeriod * VerificationService.MaxRetries / 1000} seconds");
+        }
+
+        private static void AppendNonExistantAccountToEmbed(EmbedBuilder builder, string username)
+        {
+            builder
+                .WithColor(Color.Red)
+                .WithDescription($"Failed to verify. Account \"{username}\" does not exist.");
         }
     }
 }
