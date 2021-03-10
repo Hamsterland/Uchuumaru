@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -88,20 +89,25 @@ namespace Uchuumaru.Modules
             var roles = user
                 .RoleIds
                 .ToList();
-            
-            const ulong verified = 372178027926519810;
-            
-            if (!roles.Contains(verified))
-            {
-                result = await _verification.Authenticate(username);
 
-                if (!result.IsSuccess)
+
+            IRole verified = null;
+            if (Context.Guild.Id == 301123999000166400)
+            {
+                verified = Context.Guild.GetRole(372178027926519810);
+                
+                if (!roles.Contains(verified.Id))
                 {
-                    embed.WithColor(Color.Red)
-                        .WithDescription(result.ErrorReason);
-                    await ReplyAsync(embed: embed.Build());
-                    return;
-                }               
+                    result = await _verification.Authenticate(username);
+
+                    if (!result.IsSuccess)
+                    {
+                        embed.WithColor(Color.Red)
+                            .WithDescription(result.ErrorReason);
+                        await ReplyAsync(embed: embed.Build());
+                        return;
+                    }               
+                }        
             }
             
             var token = _verification.GetToken();
@@ -128,6 +134,8 @@ namespace Uchuumaru.Modules
                         .Build();
                 });
 
+                if (Context.Guild.Id == 301123999000166400)
+                    await user.AddRoleAsync(verified);
                 return;
             }
 
