@@ -67,13 +67,13 @@ namespace Uchuumaru.Modules
                 .AddField("Edit Profile", "https://myanimelist.net/editprofile.php", true)
                 .WithFooter(
                     $"You have {VerificationService.RetryWaitPeriod * VerificationService.MaxRetries / 1000} seconds")
-                .WithImageUrl("https://timer.plus/" +
-                              $"{DateTime.Now.Year:####}," +
-                              $"{DateTime.Now.Month:##}," +
-                              $"{DateTime.Now.Day:##}," +
-                              $"{DateTime.Now.Hour - 5:##}," +
-                              $"{DateTime.Now.Minute + 1:##}," +
-                              $"{DateTime.Now.Second:##}.gif")
+                // .WithImageUrl("https://timer.plus/" +
+                //               $"{DateTime.Now.Year:####}," +
+                //               $"{DateTime.Now.Month:##}," +
+                //               $"{DateTime.Now.Day:##}," +
+                //               $"{DateTime.Now.Hour - 5:##}," +
+                //               $"{DateTime.Now.Minute + 1:##}," +
+                //               $"{DateTime.Now.Second:##}.gif")
                 .Build();
 
             var message = await ReplyAsync(embed: embed.Build());
