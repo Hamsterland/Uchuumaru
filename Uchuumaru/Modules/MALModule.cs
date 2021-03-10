@@ -78,6 +78,8 @@ namespace Uchuumaru.Modules
             }
 
             await _parser.Refresh(username);
+            var id = _parser.GetUserId();
+            await ReplyAsync($"{username}'s MyAnimeList Id is {id}.");
         }
         
         private static Embed UchuuProfileEmbed(Profile profile)
