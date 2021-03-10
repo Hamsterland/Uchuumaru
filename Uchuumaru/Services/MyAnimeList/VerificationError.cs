@@ -23,6 +23,11 @@
         /// <summary>
         /// The lists are private.
         /// </summary>
-        PrivateLists
+        PrivateLists,
+        
+        /// <summary>
+        /// Web-based error.
+        /// </summary>
+        Http
     }
 }

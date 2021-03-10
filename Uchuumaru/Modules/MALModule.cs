@@ -69,15 +69,26 @@ namespace Uchuumaru.Modules
         public async Task Set(string username)
         {
             var user = Context.User as IGuildUser;
-            var avatar = Context.User.GetAvatarUrl();
+
             var embed = new EmbedBuilder()
                 .WithAuthor(author => author
                     .WithName($"{Context.User}")
-                    .WithIconUrl(avatar));
+                    .WithIconUrl(Context.User.GetAvatarUrl()));
 
+            if (!await _verification.AccountExists(username))
+            {
+                embed.WithColor(Color.Red)
+                    .WithDescription($"Failed to verify. Account \"{username}\" does not exist.");
+                await ReplyAsync(embed: embed.Build());
+                return;
+            }
+            
             VerificationResult result;
-
-            var roles = user.RoleIds.ToList();
+            
+            var roles = user
+                .RoleIds
+                .ToList();
+            
             const ulong verified = 372178027926519810;
             
             if (!roles.Contains(verified))
@@ -86,10 +97,8 @@ namespace Uchuumaru.Modules
 
                 if (!result.IsSuccess)
                 {
-                    embed
-                        .WithColor(Color.Red)
+                    embed.WithColor(Color.Red)
                         .WithDescription(result.ErrorReason);
-
                     await ReplyAsync(embed: embed.Build());
                     return;
                 }               
@@ -115,9 +124,6 @@ namespace Uchuumaru.Modules
                 {
                     msg.Embed = new EmbedBuilder()
                         .WithColor(Color.Green)
-                        .WithAuthor(author => author
-                            .WithName($"{Context.User}")
-                            .WithIconUrl(avatar))
                         .WithDescription("Successfully linked your account.")
                         .Build();
                 });
@@ -129,9 +135,6 @@ namespace Uchuumaru.Modules
             {
                 msg.Embed = new EmbedBuilder()
                     .WithColor(Color.Red)
-                    .WithAuthor(a => a
-                        .WithName($"{Context.User}")
-                        .WithIconUrl(avatar))
                     .WithDescription(result.ErrorReason)
                     .Build();
             });

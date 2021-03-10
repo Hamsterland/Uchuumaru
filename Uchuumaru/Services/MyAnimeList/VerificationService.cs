@@ -1,6 +1,5 @@
-﻿
-
-using System;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +7,7 @@ using Uchuumaru.Data;
 using Uchuumaru.Data.Models;
 using Uchuumaru.MyAnimeList.Models;
 using Uchuumaru.MyAnimeList.Parsers;
+using static Uchuumaru.MyAnimeList.Constants;
 
 namespace Uchuumaru.Services.MyAnimeList
 {
@@ -31,13 +31,22 @@ namespace Uchuumaru.Services.MyAnimeList
         }
 
         private readonly Random _random = new();
-
+        private readonly HttpClient _client = new();
+        
         private const int _tokenLower = 100000;
         private const int _tokenUpper = 999999;
         public const int MaxRetries = 6;
         public const int RetryWaitPeriod = 10000;
         private readonly TimeSpan _minimumAccountAge = TimeSpan.FromDays(30);
 
+        
+        public async Task<bool> AccountExists(string username)
+        {
+            var url = MyAnimeListRootUrl + ProfileUrl + username;
+            var response = await _client.GetAsync(url);
+            return response.IsSuccessStatusCode;
+        }
+        
         public async Task<Profile> GetProfile(ulong userId)
         {
             await using (var context = _contextFactory.CreateDbContext()) 
@@ -58,6 +67,7 @@ namespace Uchuumaru.Services.MyAnimeList
         public async Task<VerificationResult> Authenticate(string username)
         {
             await _profileParser.Refresh(username);
+            
             var dateJoined = _profileParser.GetDateJoined();
                 
             if (DateTime.UtcNow.Ticks - dateJoined.Ticks < _minimumAccountAge.Ticks)
@@ -70,7 +80,7 @@ namespace Uchuumaru.Services.MyAnimeList
             if (!anime.HasValue || !manga.HasValue)
                 return VerificationResult.FromError(VerificationError.PrivateLists, 
                     "Failed to verify. One or more of your lists are private. Please make them accessible.");
-
+            
             if (anime is not > 0.5 and < 14 || manga is not > 0.5 and < 14)
                 return VerificationResult.FromError(VerificationError.AccountActivity,
                     "Failed to verify. Your account is too inactive. You must regularly update your list to show activity. Spamming entries will not help.");
