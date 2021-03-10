@@ -4,6 +4,7 @@ using Discord.Commands;
 using Uchuumaru.MyAnimeList.Models;
 using Uchuumaru.MyAnimeList.Parsers;
 using Uchuumaru.Services.MyAnimeList;
+using Uchuumaru.TypeReaders;
 
 namespace Uchuumaru.Modules
 {
@@ -25,10 +26,10 @@ namespace Uchuumaru.Modules
         
         [Command]
         [Summary("Finds a user's MAL account.")]
-        public async Task Search(IGuildUser user = null)
+        public async Task Search([Remainder] IGuildUser user = null)
         {
             user ??= Context.User as IGuildUser;
-
+            
             Profile profile;
             
             switch (user.Id)
