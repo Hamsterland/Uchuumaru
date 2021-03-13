@@ -45,12 +45,6 @@ namespace Uchuumaru.Modules
             
             switch (user.Id)
             {
-                case 330746772378877954:
-                {
-                    profile = await _verification.GetProfile(330746772378877954);
-                    await ReplyAsync(embed: UchuuProfileEmbed(profile));
-                    return;
-                }
                 case 153286487314661376:
                     profile = await _verification.GetProfile(422805690818625567); // Yuna
                     break;
