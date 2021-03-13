@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Uchuumaru.MyAnimeList.Models;
 using Uchuumaru.MyAnimeList.Parsers;
 using Uchuumaru.Services.MyAnimeList;
-using Uchuumaru.TypeReaders;
 
 namespace Uchuumaru.Modules
 {
@@ -23,10 +23,21 @@ namespace Uchuumaru.Modules
             _parser = parser;
             _verification = verification;
         }
+
+        [Command]
+        [Summary("Finds a user's MAL account.")]
+        public async Task SearchDiscord(string username)
+        {
+            if (string.Equals(username, "Gilrin", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var user = Context.Client.GetUser(365245718866427904);
+                await SearchDiscord(user);
+            }
+        }
         
         [Command]
         [Summary("Finds a user's MAL account.")]
-        public async Task Search([Remainder] IGuildUser user = null)
+        public async Task SearchDiscord([Remainder] IUser user = null)
         {
             user ??= Context.User as IGuildUser;
             
